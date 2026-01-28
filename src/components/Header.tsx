@@ -12,12 +12,9 @@ export function Header() {
         <div className="flex items-center gap-2">
           <a href="/" className="flex items-center gap-2">
             <img src={logo} alt="Bandung Tech Jobs" className="h-8 w-auto" />
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold leading-none tracking-tight">
-                bandungtechjobs
-              </span>
-              <span className="text-xs text-muted-foreground">.com</span>
-            </div>
+            <span className="text-sm font-semibold leading-none tracking-tight">
+              bandungtechjobs
+            </span>
           </a>
         </div>
 
