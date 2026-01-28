@@ -1,11 +1,20 @@
 import { useState, useMemo } from "react";
-import { Briefcase, Building2, Users } from "lucide-react";
-import { companies } from "@/lib/data";
+import { Briefcase, Building2, Users, ArrowUpDown } from "lucide-react";
+import { companies, Company } from "@/lib/data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CompanyCard } from "@/components/CompanyCard";
 import { FilterBar } from "@/components/FilterBar";
 import { SearchBar } from "@/components/SearchBar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type SortOption = "recent" | "oldest" | "salary-high" | "salary-low" | "company-az";
 
 // Parse salary string like "IDR 18-25 jt/bulan" to get min value in millions
 function parseSalaryMin(salary: string | undefined): number | null {
@@ -22,11 +31,12 @@ const Index = () => {
   const [selectedCompanyTypes, setSelectedCompanyTypes] = useState<string[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [salaryRange, setSalaryRange] = useState<[number, number]>([5, 40]);
+  const [sortBy, setSortBy] = useState<SortOption>("recent");
 
   const filteredCompanies = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
 
-    return companies
+    const filtered = companies
       .map((company) => {
         // Filter company type first (multi-select)
         if (selectedCompanyTypes.length > 0 && !selectedCompanyTypes.includes(company.type)) {
@@ -73,8 +83,59 @@ const Index = () => {
           roles: filteredRoles,
         };
       })
-      .filter(Boolean);
-  }, [searchQuery, selectedCategories, selectedWorkModes, selectedCompanyTypes, selectedSkills, salaryRange]);
+      .filter((c): c is Company => c !== null);
+
+    // Apply sorting
+    return filtered.map(company => {
+      const sortedRoles = [...company.roles].sort((a, b) => {
+        switch (sortBy) {
+          case "recent":
+            return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
+          case "oldest":
+            return new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime();
+          case "salary-high": {
+            const salaryA = parseSalaryMin(a.salary) ?? 0;
+            const salaryB = parseSalaryMin(b.salary) ?? 0;
+            return salaryB - salaryA;
+          }
+          case "salary-low": {
+            const salaryA = parseSalaryMin(a.salary) ?? 0;
+            const salaryB = parseSalaryMin(b.salary) ?? 0;
+            return salaryA - salaryB;
+          }
+          default:
+            return 0;
+        }
+      });
+      return { ...company, roles: sortedRoles };
+    }).sort((a, b) => {
+      if (sortBy === "company-az") {
+        return a.name.localeCompare(b.name);
+      }
+      // For other sorts, order companies by their most relevant role
+      if (sortBy === "recent") {
+        const aLatest = Math.max(...a.roles.map(r => new Date(r.lastUpdated).getTime()));
+        const bLatest = Math.max(...b.roles.map(r => new Date(r.lastUpdated).getTime()));
+        return bLatest - aLatest;
+      }
+      if (sortBy === "oldest") {
+        const aOldest = Math.min(...a.roles.map(r => new Date(r.lastUpdated).getTime()));
+        const bOldest = Math.min(...b.roles.map(r => new Date(r.lastUpdated).getTime()));
+        return aOldest - bOldest;
+      }
+      if (sortBy === "salary-high") {
+        const aMax = Math.max(...a.roles.map(r => parseSalaryMin(r.salary) ?? 0));
+        const bMax = Math.max(...b.roles.map(r => parseSalaryMin(r.salary) ?? 0));
+        return bMax - aMax;
+      }
+      if (sortBy === "salary-low") {
+        const aMin = Math.min(...a.roles.map(r => parseSalaryMin(r.salary) ?? Infinity));
+        const bMin = Math.min(...b.roles.map(r => parseSalaryMin(r.salary) ?? Infinity));
+        return aMin - bMin;
+      }
+      return 0;
+    });
+  }, [searchQuery, selectedCategories, selectedWorkModes, selectedCompanyTypes, selectedSkills, salaryRange, sortBy]);
 
   const totalRoles = useMemo(() => {
     return companies.reduce((sum, company) => sum + company.roles.length, 0);
@@ -182,8 +243,8 @@ const Index = () => {
 
             {/* Company Listings */}
             <div className="space-y-4">
-              {/* Results count */}
-              <div className="flex items-center justify-between">
+              {/* Results count and sort */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">
                   {!hasActiveFilters ? (
                     <>Showing all {companies.length} companies</>
@@ -195,11 +256,27 @@ const Index = () => {
                     </>
                   )}
                 </p>
+                
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                  <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
+                    <SelectTrigger className="h-9 w-[160px] bg-card">
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card">
+                      <SelectItem value="recent">Most Recent</SelectItem>
+                      <SelectItem value="oldest">Oldest First</SelectItem>
+                      <SelectItem value="salary-high">Salary: High to Low</SelectItem>
+                      <SelectItem value="salary-low">Salary: Low to High</SelectItem>
+                      <SelectItem value="company-az">Company A-Z</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              {/* Company Cards - cross-fade on filter changes */}
+              {/* Company Cards - cross-fade on filter/sort changes */}
               <div 
-                key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${selectedSkills.join(',')}-${salaryRange.join('-')}`}
+                key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${selectedSkills.join(',')}-${salaryRange.join('-')}-${sortBy}`}
                 className="animate-cross-fade space-y-3"
               >
                 {filteredCompanies.length > 0 ? (
