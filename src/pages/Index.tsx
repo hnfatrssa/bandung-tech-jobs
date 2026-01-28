@@ -74,12 +74,12 @@ const Index = () => {
 
       <main className="flex-1">
       {/* Hero Section */}
-        <section className="relative overflow-hidden border-b bg-gradient-to-br from-primary via-primary/90 to-secondary">
+        <section className="relative overflow-hidden border-b bg-gradient-to-br from-[hsl(221,70%,40%)] via-[hsl(221,60%,45%)] to-[hsl(142,60%,40%)]">
           {/* Decorative elements */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(var(--highlight)/0.3),_transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_hsl(var(--secondary)/0.4),_transparent_50%)]" />
-          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-highlight/20 blur-3xl" />
-          <div className="absolute bottom-0 left-1/4 h-48 w-48 rounded-full bg-secondary/30 blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(45,80%,50%,0.2),_transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_hsl(142,60%,45%,0.4),_transparent_50%)]" />
+          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[hsl(45,80%,50%,0.15)] blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 h-48 w-48 rounded-full bg-[hsl(142,60%,45%,0.25)] blur-3xl" />
           
           <div className="container relative py-12 md:py-16">
             <div className="max-w-2xl space-y-4">
