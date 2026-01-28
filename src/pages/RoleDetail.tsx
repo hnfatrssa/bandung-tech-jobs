@@ -54,8 +54,21 @@ const RoleDetail = () => {
         </div>
 
         {/* Role Header */}
-        <section className="border-b">
-          <div className="container py-8 md:py-12">
+        <section className="relative overflow-hidden border-b bg-[hsl(221,75%,35%)]">
+          {/* Dynamic fluid gradient background using Jabar colors */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(221,80%,40%)] via-[hsl(280,60%,45%)] to-[hsl(330,70%,50%)]" />
+          
+          {/* Animated floating blob shapes */}
+          <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-[hsl(200,90%,55%)] blur-3xl opacity-70 animate-blob-float" />
+          <div className="absolute left-1/4 top-1/2 h-96 w-96 rounded-full bg-[hsl(142,70%,45%)] blur-3xl opacity-60 animate-blob-float [animation-delay:2s]" />
+          <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-[hsl(45,90%,55%)] blur-3xl opacity-50 animate-blob-float [animation-delay:4s]" />
+          <div className="absolute -bottom-20 right-1/4 h-80 w-80 rounded-full bg-[hsl(221,85%,50%)] blur-3xl opacity-60 animate-blob-float [animation-delay:6s]" />
+          <div className="absolute bottom-0 -left-10 h-64 w-64 rounded-full bg-[hsl(180,70%,45%)] blur-3xl opacity-50 animate-blob-float [animation-delay:8s]" />
+          
+          {/* Subtle overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(221,80%,25%,0.4)] to-transparent" />
+
+          <div className="container relative py-8 md:py-12">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
@@ -72,32 +85,32 @@ const RoleDetail = () => {
                   </div>
                 )}
 
-                <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+                <h1 className="text-2xl font-bold tracking-tight text-primary-foreground md:text-3xl">
                   {role.title}
                 </h1>
 
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/20 text-primary-foreground">
                     <Building2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-medium">{company.name}</p>
-                    <p className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <p className="font-medium text-primary-foreground">{company.name}</p>
+                    <p className="flex items-center gap-1 text-sm text-primary-foreground/80">
                       <MapPin className="h-3.5 w-3.5" />
                       {company.location}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5 text-sm text-primary-foreground/70">
                   <Clock className="h-3.5 w-3.5" />
                   <span>Updated {formatDistanceToNow(new Date(role.lastUpdated), { addSuffix: true })}</span>
-                  <span className="text-muted-foreground/50">•</span>
+                  <span className="text-primary-foreground/50">•</span>
                   <span>{format(new Date(role.lastUpdated), "MMM d, yyyy")}</span>
                 </div>
               </div>
 
-              <Button asChild size="lg" className="shrink-0 transition-all duration-micro ease-calm">
+              <Button asChild size="lg" className="shrink-0 bg-primary-foreground text-primary hover:bg-primary-foreground/90 transition-all duration-micro ease-calm">
                 <a
                   href={role.applyUrl}
                   target="_blank"
