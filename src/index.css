@@ -123,6 +123,35 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Calm hover elevation for cards */
+  .hover-elevate {
+    @apply transition-shadow duration-micro ease-calm;
+  }
+  .hover-elevate:hover {
+    box-shadow: 0 2px 8px -2px hsl(var(--foreground) / 0.08);
+  }
+
+  /* Subtle border highlight on hover */
+  .hover-border-accent {
+    @apply transition-colors duration-micro ease-calm;
+  }
+  .hover-border-accent:hover {
+    @apply border-primary/30;
+  }
 }
 
 @layer utilities {

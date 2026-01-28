@@ -76,23 +76,49 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+        // Expand/collapse for company groups (180-240ms)
+        "expand-down": {
+          from: { height: "0", opacity: "0" },
+          to: { height: "var(--radix-accordion-content-height)", opacity: "1" },
         },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+        "expand-up": {
+          from: { height: "var(--radix-accordion-content-height)", opacity: "1" },
+          to: { height: "0", opacity: "0" },
         },
-        "fade-in": {
-          from: { opacity: "0", transform: "translateY(8px)" },
+        // Subtle fade with minimal vertical motion (4-6px)
+        "fade-in-up": {
+          from: { opacity: "0", transform: "translateY(5px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        // Cross-fade for filter changes
+        "cross-fade": {
+          from: { opacity: "0.9" },
+          to: { opacity: "1" },
+        },
+        // Page transition fade
+        "page-enter": {
+          from: { opacity: "0", transform: "translateY(6px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.3s ease-out",
+        // Company expand/collapse: 200ms ease-out
+        "expand-down": "expand-down 200ms cubic-bezier(0.2, 0, 0, 1)",
+        "expand-up": "expand-up 180ms cubic-bezier(0.2, 0, 0, 1)",
+        // Role items fade in: 180ms
+        "fade-in-up": "fade-in-up 180ms cubic-bezier(0.2, 0, 0, 1)",
+        // Filter cross-fade: 150ms
+        "cross-fade": "cross-fade 150ms ease-out",
+        // Page transitions: 200ms
+        "page-enter": "page-enter 200ms cubic-bezier(0.2, 0, 0, 1)",
+      },
+      // Calm transition defaults
+      transitionDuration: {
+        "micro": "150ms",
+        "expand": "200ms",
+      },
+      transitionTimingFunction: {
+        "calm": "cubic-bezier(0.2, 0, 0, 1)",
       },
     },
   },
