@@ -2,33 +2,29 @@ import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { categories, workModes, companyTypes, companies, type Role } from "@/lib/data";
+import { Separator } from "@/components/ui/separator";
+import { categories, workModes, companyTypes, companies, allSkills, type Role } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, X, Briefcase, MapPin, DollarSign, Building2, Wrench } from "lucide-react";
 
 interface FilterBarProps {
   selectedCategories: string[];
   selectedWorkModes: string[];
   selectedCompanyTypes: string[];
+  selectedSkills: string[];
   salaryRange: [number, number];
   onCategoriesChange: (categories: string[]) => void;
   onWorkModesChange: (modes: string[]) => void;
   onCompanyTypesChange: (types: string[]) => void;
+  onSkillsChange: (skills: string[]) => void;
   onSalaryRangeChange: (range: [number, number]) => void;
 }
 
-// Parse salary string like "IDR 18-25 jt/bulan" to get min value in millions
+// Parse salary string to get min value in millions
 function parseSalaryMin(salary: string | undefined): number | null {
   if (!salary) return null;
   const match = salary.match(/(\d+)-(\d+)/);
   if (match) return parseInt(match[1], 10);
-  return null;
-}
-
-function parseSalaryMax(salary: string | undefined): number | null {
-  if (!salary) return null;
-  const match = salary.match(/(\d+)-(\d+)/);
-  if (match) return parseInt(match[2], 10);
   return null;
 }
 
@@ -41,15 +37,17 @@ export function FilterBar({
   selectedCategories,
   selectedWorkModes,
   selectedCompanyTypes,
+  selectedSkills,
   salaryRange,
   onCategoriesChange,
   onWorkModesChange,
   onCompanyTypesChange,
+  onSkillsChange,
   onSalaryRangeChange,
 }: FilterBarProps) {
   const allRoles = useMemo(() => getAllRoles(), []);
 
-  // Count roles per filter option (considering other active filters)
+  // Count roles per filter option
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     categories.forEach(cat => {
@@ -59,13 +57,32 @@ export function FilterBar({
           const company = companies.find(c => c.roles.some(r => r.id === role.id));
           if (company && !selectedCompanyTypes.includes(company.type)) return false;
         }
+        if (selectedSkills.length > 0 && !selectedSkills.some(s => role.skills.includes(s))) return false;
         const salaryMin = parseSalaryMin(role.salary);
         if (salaryMin !== null && (salaryMin < salaryRange[0] || salaryMin > salaryRange[1])) return false;
         return role.category === cat;
       }).length;
     });
     return counts;
-  }, [allRoles, selectedWorkModes, selectedCompanyTypes, salaryRange]);
+  }, [allRoles, selectedWorkModes, selectedCompanyTypes, selectedSkills, salaryRange]);
+
+  const skillCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    allSkills.forEach(skill => {
+      counts[skill] = allRoles.filter(role => {
+        if (selectedCategories.length > 0 && !selectedCategories.includes(role.category)) return false;
+        if (selectedWorkModes.length > 0 && !selectedWorkModes.includes(role.workMode)) return false;
+        if (selectedCompanyTypes.length > 0) {
+          const company = companies.find(c => c.roles.some(r => r.id === role.id));
+          if (company && !selectedCompanyTypes.includes(company.type)) return false;
+        }
+        const salaryMin = parseSalaryMin(role.salary);
+        if (salaryMin !== null && (salaryMin < salaryRange[0] || salaryMin > salaryRange[1])) return false;
+        return role.skills.includes(skill);
+      }).length;
+    });
+    return counts;
+  }, [allRoles, selectedCategories, selectedWorkModes, selectedCompanyTypes, salaryRange]);
 
   const workModeCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -76,13 +93,14 @@ export function FilterBar({
           const company = companies.find(c => c.roles.some(r => r.id === role.id));
           if (company && !selectedCompanyTypes.includes(company.type)) return false;
         }
+        if (selectedSkills.length > 0 && !selectedSkills.some(s => role.skills.includes(s))) return false;
         const salaryMin = parseSalaryMin(role.salary);
         if (salaryMin !== null && (salaryMin < salaryRange[0] || salaryMin > salaryRange[1])) return false;
         return role.workMode === mode;
       }).length;
     });
     return counts;
-  }, [allRoles, selectedCategories, selectedCompanyTypes, salaryRange]);
+  }, [allRoles, selectedCategories, selectedCompanyTypes, selectedSkills, salaryRange]);
 
   const companyTypeCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -93,19 +111,28 @@ export function FilterBar({
         if (!company || !companyIds.includes(company.id)) return false;
         if (selectedCategories.length > 0 && !selectedCategories.includes(role.category)) return false;
         if (selectedWorkModes.length > 0 && !selectedWorkModes.includes(role.workMode)) return false;
+        if (selectedSkills.length > 0 && !selectedSkills.some(s => role.skills.includes(s))) return false;
         const salaryMin = parseSalaryMin(role.salary);
         if (salaryMin !== null && (salaryMin < salaryRange[0] || salaryMin > salaryRange[1])) return false;
         return true;
       }).length;
     });
     return counts;
-  }, [allRoles, selectedCategories, selectedWorkModes, salaryRange]);
+  }, [allRoles, selectedCategories, selectedWorkModes, selectedSkills, salaryRange]);
 
   const toggleCategory = (category: string) => {
     if (selectedCategories.includes(category)) {
       onCategoriesChange(selectedCategories.filter(c => c !== category));
     } else {
       onCategoriesChange([...selectedCategories, category]);
+    }
+  };
+
+  const toggleSkill = (skill: string) => {
+    if (selectedSkills.includes(skill)) {
+      onSkillsChange(selectedSkills.filter(s => s !== skill));
+    } else {
+      onSkillsChange([...selectedSkills, skill]);
     }
   };
 
@@ -129,19 +156,21 @@ export function FilterBar({
     selectedCategories.length > 0 || 
     selectedWorkModes.length > 0 || 
     selectedCompanyTypes.length > 0 ||
+    selectedSkills.length > 0 ||
     salaryRange[0] > 5 || salaryRange[1] < 40;
 
   const activeFilterCount = 
     selectedCategories.length + 
     selectedWorkModes.length + 
     selectedCompanyTypes.length +
+    selectedSkills.length +
     (salaryRange[0] > 5 || salaryRange[1] < 40 ? 1 : 0);
 
   return (
     <div className="space-y-4">
       {/* Active filter chips */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap gap-1.5 pb-2 border-b">
+        <div className="flex flex-wrap gap-1.5 pb-3">
           {selectedCategories.map(cat => (
             <button
               key={cat}
@@ -149,6 +178,16 @@ export function FilterBar({
               className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
             >
               {cat}
+              <X className="h-3 w-3" />
+            </button>
+          ))}
+          {selectedSkills.map(skill => (
+            <button
+              key={skill}
+              onClick={() => toggleSkill(skill)}
+              className="inline-flex items-center gap-1 rounded-full bg-accent/50 px-2.5 py-1 text-xs font-medium text-accent-foreground hover:bg-accent transition-colors"
+            >
+              {skill}
               <X className="h-3 w-3" />
             </button>
           ))}
@@ -184,150 +223,229 @@ export function FilterBar({
         </div>
       )}
 
-      {/* Role Categories */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors">
-          <span>Role {selectedCategories.length > 0 && `(${selectedCategories.length})`}</span>
-          <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-2">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant="outline"
-                size="sm"
-                onClick={() => toggleCategory(category)}
-                className={cn(
-                  "h-8 rounded-full text-xs transition-all duration-150",
-                  selectedCategories.includes(category)
-                    ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
-                    : "hover:border-primary/50",
-                  categoryCounts[category] === 0 && "opacity-50"
-                )}
-              >
-                {category}
-                <span className={cn(
-                  "ml-1.5 text-[10px]",
-                  selectedCategories.includes(category) ? "text-primary-foreground/70" : "text-muted-foreground"
-                )}>
-                  {categoryCounts[category]}
-                </span>
-              </Button>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+      {/* ══════════════════════════════════════════════════════ */}
+      {/* SECTION 1: Role Filters */}
+      {/* ══════════════════════════════════════════════════════ */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground/70">
+          <Briefcase className="h-3.5 w-3.5" />
+          <span>Role</span>
+        </div>
 
-      {/* Work Mode */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors">
-          <span>Work Mode {selectedWorkModes.length > 0 && `(${selectedWorkModes.length})`}</span>
-          <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-2">
-          <div className="flex flex-wrap gap-2">
-            {workModes.map((mode) => (
-              <Button
-                key={mode}
-                variant="outline"
-                size="sm"
-                onClick={() => toggleWorkMode(mode)}
-                className={cn(
-                  "h-8 rounded-full text-xs transition-all duration-150",
-                  selectedWorkModes.includes(mode)
-                    ? "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground"
-                    : "hover:border-secondary/50",
-                  workModeCounts[mode] === 0 && "opacity-50"
-                )}
-              >
-                {mode}
-                <span className={cn(
-                  "ml-1.5 text-[10px]",
-                  selectedWorkModes.includes(mode) ? "text-secondary-foreground/70" : "text-muted-foreground"
-                )}>
-                  {workModeCounts[mode]}
-                </span>
-              </Button>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      {/* Company Type */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors">
-          <span>Company {selectedCompanyTypes.length > 0 && `(${selectedCompanyTypes.length})`}</span>
-          <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-2">
-          <div className="flex flex-wrap gap-2">
-            {companyTypes.map((type) => (
-              <Button
-                key={type}
-                variant="outline"
-                size="sm"
-                onClick={() => toggleCompanyType(type)}
-                className={cn(
-                  "h-8 rounded-full text-xs transition-all duration-150",
-                  selectedCompanyTypes.includes(type)
-                    ? "border-foreground bg-foreground text-background hover:bg-foreground/90 hover:text-background"
-                    : "hover:border-foreground/30",
-                  companyTypeCounts[type] === 0 && "opacity-50"
-                )}
-              >
-                {type}
-                <span className={cn(
-                  "ml-1.5 text-[10px]",
-                  selectedCompanyTypes.includes(type) ? "text-background/70" : "text-muted-foreground"
-                )}>
-                  {companyTypeCounts[type]}
-                </span>
-              </Button>
-            ))}
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      {/* Salary Range */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors">
-          <span>Salary Range</span>
-          <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-3">
-          <div className="space-y-3">
-            <Slider
-              value={salaryRange}
-              min={5}
-              max={40}
-              step={1}
-              onValueChange={(value) => onSalaryRangeChange(value as [number, number])}
-              className="w-full"
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>IDR {salaryRange[0]}M</span>
-              <span>IDR {salaryRange[1]}M/month</span>
+        {/* Role Categories */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <span>Category {selectedCategories.length > 0 && `(${selectedCategories.length})`}</span>
+            <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-2">
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toggleCategory(category)}
+                  className={cn(
+                    "h-8 rounded-full text-xs transition-all duration-150",
+                    selectedCategories.includes(category)
+                      ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+                      : "hover:border-primary/50",
+                    categoryCounts[category] === 0 && "opacity-50"
+                  )}
+                >
+                  {category}
+                  <span className={cn(
+                    "ml-1.5 text-[10px]",
+                    selectedCategories.includes(category) ? "text-primary-foreground/70" : "text-muted-foreground"
+                  )}>
+                    {categoryCounts[category]}
+                  </span>
+                </Button>
+              ))}
             </div>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Skills */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <span className="flex items-center gap-1.5">
+              <Wrench className="h-3 w-3" />
+              Skills {selectedSkills.length > 0 && `(${selectedSkills.length})`}
+            </span>
+            <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-2">
+            <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
+              {allSkills.map((skill) => (
+                <Button
+                  key={skill}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toggleSkill(skill)}
+                  className={cn(
+                    "h-7 rounded-md text-xs transition-all duration-150 px-2",
+                    selectedSkills.includes(skill)
+                      ? "border-accent bg-accent text-accent-foreground hover:bg-accent/90"
+                      : "hover:border-accent/50",
+                    skillCounts[skill] === 0 && "opacity-50"
+                  )}
+                >
+                  {skill}
+                  <span className={cn(
+                    "ml-1 text-[10px]",
+                    selectedSkills.includes(skill) ? "text-accent-foreground/70" : "text-muted-foreground"
+                  )}>
+                    {skillCounts[skill]}
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+
+      <Separator className="my-4" />
+
+      {/* ══════════════════════════════════════════════════════ */}
+      {/* SECTION 2: Work Preferences */}
+      {/* ══════════════════════════════════════════════════════ */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground/70">
+          <MapPin className="h-3.5 w-3.5" />
+          <span>Work Preferences</span>
+        </div>
+
+        {/* Work Mode */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <span>Work Mode {selectedWorkModes.length > 0 && `(${selectedWorkModes.length})`}</span>
+            <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-2">
+            <div className="flex flex-wrap gap-2">
+              {workModes.map((mode) => (
+                <Button
+                  key={mode}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toggleWorkMode(mode)}
+                  className={cn(
+                    "h-8 rounded-full text-xs transition-all duration-150",
+                    selectedWorkModes.includes(mode)
+                      ? "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground"
+                      : "hover:border-secondary/50",
+                    workModeCounts[mode] === 0 && "opacity-50"
+                  )}
+                >
+                  {mode}
+                  <span className={cn(
+                    "ml-1.5 text-[10px]",
+                    selectedWorkModes.includes(mode) ? "text-secondary-foreground/70" : "text-muted-foreground"
+                  )}>
+                    {workModeCounts[mode]}
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Salary Range */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <span className="flex items-center gap-1.5">
+              <DollarSign className="h-3 w-3" />
+              Salary Range
+            </span>
+            <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-3">
+            <div className="space-y-3">
+              <Slider
+                value={salaryRange}
+                min={5}
+                max={40}
+                step={1}
+                onValueChange={(value) => onSalaryRangeChange(value as [number, number])}
+                className="w-full"
+              />
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>IDR {salaryRange[0]}M</span>
+                <span>IDR {salaryRange[1]}M/month</span>
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+
+      <Separator className="my-4" />
+
+      {/* ══════════════════════════════════════════════════════ */}
+      {/* SECTION 3: Company */}
+      {/* ══════════════════════════════════════════════════════ */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground/70">
+          <Building2 className="h-3.5 w-3.5" />
+          <span>Company</span>
+        </div>
+
+        {/* Company Type */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <span>Type {selectedCompanyTypes.length > 0 && `(${selectedCompanyTypes.length})`}</span>
+            <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-2">
+            <div className="flex flex-wrap gap-2">
+              {companyTypes.map((type) => (
+                <Button
+                  key={type}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toggleCompanyType(type)}
+                  className={cn(
+                    "h-8 rounded-full text-xs transition-all duration-150",
+                    selectedCompanyTypes.includes(type)
+                      ? "border-foreground bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                      : "hover:border-foreground/30",
+                    companyTypeCounts[type] === 0 && "opacity-50"
+                  )}
+                >
+                  {type}
+                  <span className={cn(
+                    "ml-1.5 text-[10px]",
+                    selectedCompanyTypes.includes(type) ? "text-background/70" : "text-muted-foreground"
+                  )}>
+                    {companyTypeCounts[type]}
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
 
       {/* Clear filters */}
       {hasActiveFilters && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            onCategoriesChange([]);
-            onWorkModesChange([]);
-            onCompanyTypesChange([]);
-            onSalaryRangeChange([5, 40]);
-          }}
-          className="w-full text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
-        >
-          Clear all filters ({activeFilterCount})
-        </Button>
+        <>
+          <Separator className="my-4" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              onCategoriesChange([]);
+              onWorkModesChange([]);
+              onCompanyTypesChange([]);
+              onSkillsChange([]);
+              onSalaryRangeChange([5, 40]);
+            }}
+            className="w-full text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
+          >
+            Clear all filters ({activeFilterCount})
+          </Button>
+        </>
       )}
     </div>
   );
