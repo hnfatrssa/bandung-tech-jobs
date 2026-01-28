@@ -174,7 +174,7 @@ const Index = () => {
                       <CompanyCard
                         key={company.id}
                         company={company}
-                        defaultExpanded={index === 0}
+                        defaultExpanded={!!hasActiveFilters || index === 0}
                       />
                     ) : null
                   )
