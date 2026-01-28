@@ -74,7 +74,7 @@ const Index = () => {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="border-b bg-muted/30">
+        <section className="border-b bg-gradient-to-br from-primary/5 via-background to-secondary/5">
           <div className="container py-12 md:py-16">
             <div className="max-w-2xl space-y-4">
               <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
@@ -94,33 +94,38 @@ const Index = () => {
               />
             </div>
 
-            {/* Stats */}
-            <div className="mt-6 flex flex-wrap gap-6">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                  <Building2 className="h-4 w-4 text-primary" />
+            {/* Stats - More colorful with Jabar palette */}
+            <div className="mt-8 flex flex-wrap gap-4">
+              {/* Companies hiring - Jabar Blue */}
+              <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/10 px-5 py-4 shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Building2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">{companies.length}</p>
-                  <p className="text-xs text-muted-foreground">Companies hiring</p>
+                  <p className="text-2xl font-bold text-primary">{companies.length}</p>
+                  <p className="text-sm font-medium text-primary/80">Companies hiring</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary/15">
-                  <Briefcase className="h-4 w-4 text-secondary" />
+
+              {/* Open roles - Jabar Green */}
+              <div className="flex items-center gap-3 rounded-xl border border-secondary/20 bg-secondary/10 px-5 py-4 shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
+                  <Briefcase className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">{totalRoles}</p>
-                  <p className="text-xs text-muted-foreground">Open roles</p>
+                  <p className="text-2xl font-bold text-secondary">{totalRoles}</p>
+                  <p className="text-sm font-medium text-secondary/80">Open roles</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-                  <Users className="h-4 w-4 text-muted-foreground" />
+
+              {/* Location - Jabar Yellow accent */}
+              <div className="flex items-center gap-3 rounded-xl border border-highlight/30 bg-highlight/10 px-5 py-4 shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-highlight text-highlight-foreground">
+                  <Users className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">Bandung</p>
-                  <p className="text-xs text-muted-foreground">West Java</p>
+                  <p className="text-2xl font-bold text-foreground">Bandung</p>
+                  <p className="text-sm font-medium text-muted-foreground">West Java</p>
                 </div>
               </div>
             </div>
