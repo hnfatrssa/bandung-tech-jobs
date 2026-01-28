@@ -177,7 +177,7 @@ export function FilterBar({
               onClick={() => onSalaryRangeChange([5, 40])}
               className="inline-flex items-center gap-1 rounded-full bg-highlight/15 px-2.5 py-1 text-xs font-medium text-highlight-foreground hover:bg-highlight/25 transition-colors"
             >
-              {salaryRange[0]}-{salaryRange[1]} jt
+              IDR {salaryRange[0]}-{salaryRange[1]}M
               <X className="h-3 w-3" />
             </button>
           )}
@@ -306,8 +306,8 @@ export function FilterBar({
               className="w-full"
             />
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>IDR {salaryRange[0]} jt</span>
-              <span>IDR {salaryRange[1]} jt/bulan</span>
+              <span>IDR {salaryRange[0]}M</span>
+              <span>IDR {salaryRange[1]}M/month</span>
             </div>
           </div>
         </CollapsibleContent>
