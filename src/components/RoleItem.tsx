@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Clock } from "lucide-react";
 import { Role } from "@/lib/data";
 import { RoleTag } from "./RoleTag";
 import { WorkModeBadge } from "./WorkModeBadge";
 import { SalaryBadge } from "./SalaryBadge";
 import { SkillTag } from "./SkillTag";
+import { formatDistanceToNow } from "date-fns";
 
 interface RoleItemProps {
   role: Role;
@@ -12,6 +13,8 @@ interface RoleItemProps {
 }
 
 export function RoleItem({ role, companyId }: RoleItemProps) {
+  const lastUpdatedText = formatDistanceToNow(new Date(role.lastUpdated), { addSuffix: true });
+
   return (
     <Link
       to={`/company/${companyId}/role/${role.id}`}
@@ -19,9 +22,15 @@ export function RoleItem({ role, companyId }: RoleItemProps) {
     >
       <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         <div className="flex-1 space-y-1.5">
-          <h4 className="font-medium transition-colors duration-micro ease-calm group-hover:text-primary">
-            {role.title}
-          </h4>
+          <div className="flex items-center gap-2">
+            <h4 className="font-medium transition-colors duration-micro ease-calm group-hover:text-primary">
+              {role.title}
+            </h4>
+            <span className="hidden items-center gap-1 text-xs text-muted-foreground sm:flex">
+              <Clock className="h-3 w-3" />
+              {lastUpdatedText}
+            </span>
+          </div>
           {role.skills.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {role.skills.slice(0, 3).map((skill) => (

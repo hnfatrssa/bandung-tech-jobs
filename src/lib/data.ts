@@ -9,6 +9,7 @@ export interface Role {
   responsibilities: string[];
   requirements: string[];
   applyUrl: string;
+  lastUpdated: string; // ISO date string
 }
 
 export interface Company {
@@ -48,7 +49,8 @@ export const companies: Company[] = [
           "Experience with accessibility standards (WCAG)",
           "Strong problem-solving and communication skills"
         ],
-        applyUrl: "https://careers.jabarprov.go.id"
+        applyUrl: "https://careers.jabarprov.go.id",
+        lastUpdated: "2026-01-27"
       },
       {
         id: "jds-be-1",
@@ -70,7 +72,8 @@ export const companies: Company[] = [
           "Experience with PostgreSQL and Redis",
           "Understanding of DevOps practices"
         ],
-        applyUrl: "https://careers.jabarprov.go.id"
+        applyUrl: "https://careers.jabarprov.go.id",
+        lastUpdated: "2026-01-25"
       },
       {
         id: "jds-pm-1",
@@ -92,7 +95,8 @@ export const companies: Company[] = [
           "Strong analytical and communication skills",
           "Ability to navigate complex stakeholder environments"
         ],
-        applyUrl: "https://careers.jabarprov.go.id"
+        applyUrl: "https://careers.jabarprov.go.id",
+        lastUpdated: "2026-01-20"
       }
     ]
   },
@@ -123,7 +127,8 @@ export const companies: Company[] = [
           "Experience with large-scale consumer apps",
           "Published apps with 1M+ downloads preferred"
         ],
-        applyUrl: "https://careers.bukalapak.com"
+        applyUrl: "https://careers.bukalapak.com",
+        lastUpdated: "2026-01-26"
       },
       {
         id: "bl-data-1",
@@ -145,7 +150,8 @@ export const companies: Company[] = [
           "Experience with Airflow and cloud platforms",
           "Understanding of data modeling best practices"
         ],
-        applyUrl: "https://careers.bukalapak.com"
+        applyUrl: "https://careers.bukalapak.com",
+        lastUpdated: "2026-01-22"
       }
     ]
   },
@@ -176,7 +182,8 @@ export const companies: Company[] = [
           "Strong JavaScript/TypeScript skills",
           "Understanding of streaming protocols (HLS, DASH)"
         ],
-        applyUrl: "https://careers.vidio.com"
+        applyUrl: "https://careers.vidio.com",
+        lastUpdated: "2026-01-24"
       }
     ]
   },
@@ -207,7 +214,8 @@ export const companies: Company[] = [
           "Expert in Java or Go",
           "Strong understanding of distributed systems"
         ],
-        applyUrl: "https://careers.doku.com"
+        applyUrl: "https://careers.doku.com",
+        lastUpdated: "2026-01-18"
       },
       {
         id: "doku-qa-1",
@@ -229,7 +237,8 @@ export const companies: Company[] = [
           "Understanding of API testing tools",
           "Detail-oriented with strong documentation skills"
         ],
-        applyUrl: "https://careers.doku.com"
+        applyUrl: "https://careers.doku.com",
+        lastUpdated: "2026-01-15"
       }
     ]
   },
@@ -260,7 +269,8 @@ export const companies: Company[] = [
           "Experience with cloud deployment",
           "Good communication skills"
         ],
-        applyUrl: "https://sagara.id/careers"
+        applyUrl: "https://sagara.id/careers",
+        lastUpdated: "2026-01-28"
       },
       {
         id: "sagara-ui-1",
@@ -282,7 +292,8 @@ export const companies: Company[] = [
           "Portfolio demonstrating enterprise design work",
           "Understanding of design tokens and systems"
         ],
-        applyUrl: "https://sagara.id/careers"
+        applyUrl: "https://sagara.id/careers",
+        lastUpdated: "2026-01-21"
       }
     ]
   },
@@ -313,7 +324,8 @@ export const companies: Company[] = [
           "Experience with Terraform and Kubernetes",
           "Understanding of security best practices"
         ],
-        applyUrl: "https://xtremax.com/careers"
+        applyUrl: "https://xtremax.com/careers",
+        lastUpdated: "2026-01-23"
       }
     ]
   },
@@ -344,7 +356,8 @@ export const companies: Company[] = [
           "Experience with fintech apps preferred",
           "Strong attention to UX details"
         ],
-        applyUrl: "https://flip.id/karir"
+        applyUrl: "https://flip.id/karir",
+        lastUpdated: "2026-01-28"
       },
       {
         id: "flip-product-1",
@@ -366,7 +379,8 @@ export const companies: Company[] = [
           "Strong portfolio of shipped products",
           "Ability to simplify complex financial concepts"
         ],
-        applyUrl: "https://flip.id/karir"
+        applyUrl: "https://flip.id/karir",
+        lastUpdated: "2026-01-19"
       }
     ]
   }
