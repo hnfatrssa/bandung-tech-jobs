@@ -5,6 +5,7 @@ type Category = "Engineering" | "Design" | "Product" | "Data" | "QA" | "Platform
 interface RoleTagProps {
   category: Category;
   className?: string;
+  variant?: "default" | "hero";
 }
 
 const categoryStyles: Record<Category, string> = {
@@ -16,12 +17,14 @@ const categoryStyles: Record<Category, string> = {
   Platform: "bg-secondary/15 text-secondary",
 };
 
-export function RoleTag({ category, className }: RoleTagProps) {
+export function RoleTag({ category, className, variant = "default" }: RoleTagProps) {
   return (
     <span
       className={cn(
         "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium",
-        categoryStyles[category],
+        variant === "hero" 
+          ? "bg-white/20 text-white backdrop-blur-sm border border-white/30" 
+          : categoryStyles[category],
         className
       )}
     >
