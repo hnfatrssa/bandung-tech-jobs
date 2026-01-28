@@ -139,10 +139,11 @@
 @layer utilities {
   /* Calm hover elevation for cards */
   .hover-elevate {
-    @apply transition-shadow duration-micro ease-calm;
+    @apply transition-all duration-smooth ease-smooth;
   }
   .hover-elevate:hover {
-    box-shadow: 0 2px 8px -2px hsl(var(--foreground) / 0.08);
+    box-shadow: 0 4px 16px -4px hsl(var(--foreground) / 0.1);
+    transform: translateY(-1px);
   }
 
   /* Subtle border highlight on hover */
@@ -150,7 +151,29 @@
     @apply transition-colors duration-micro ease-calm;
   }
   .hover-border-accent:hover {
-    @apply border-primary/30;
+    @apply border-primary/40;
+  }
+  
+  /* Staggered animation delays for lists */
+  .stagger-1 { animation-delay: 50ms; }
+  .stagger-2 { animation-delay: 100ms; }
+  .stagger-3 { animation-delay: 150ms; }
+  .stagger-4 { animation-delay: 200ms; }
+  .stagger-5 { animation-delay: 250ms; }
+  
+  /* Glass effect for cards */
+  .glass {
+    @apply backdrop-blur-sm bg-card/80;
+  }
+  
+  /* Subtle glow for important elements */
+  .glow-primary {
+    box-shadow: 0 0 20px -5px hsl(var(--primary) / 0.3);
+  }
+  
+  /* Interactive press effect */
+  .press-effect {
+    @apply transition-transform duration-micro active:scale-[0.98];
   }
 }
 
