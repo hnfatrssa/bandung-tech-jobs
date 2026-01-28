@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, MapPin, Building2, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Building2, ExternalLink, Clock } from "lucide-react";
 import { companies } from "@/lib/data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -8,6 +8,7 @@ import { RoleTag } from "@/components/RoleTag";
 import { WorkModeBadge } from "@/components/WorkModeBadge";
 import { SalaryBadge } from "@/components/SalaryBadge";
 import { SkillTag } from "@/components/SkillTag";
+import { formatDistanceToNow, format } from "date-fns";
 
 const RoleDetail = () => {
   const { companyId, roleId } = useParams();
@@ -86,6 +87,13 @@ const RoleDetail = () => {
                       {company.location}
                     </p>
                   </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>Updated {formatDistanceToNow(new Date(role.lastUpdated), { addSuffix: true })}</span>
+                  <span className="text-muted-foreground/50">•</span>
+                  <span>{format(new Date(role.lastUpdated), "MMM d, yyyy")}</span>
                 </div>
               </div>
 
