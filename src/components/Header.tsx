@@ -1,6 +1,7 @@
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/useTheme";
+import logo from "@/assets/logo.png";
 
 export function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -10,9 +11,7 @@ export function Header() {
       <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center gap-2">
           <a href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">BT</span>
-            </div>
+            <img src={logo} alt="Bandung Tech Jobs" className="h-8 w-auto" />
             <div className="flex flex-col">
               <span className="text-sm font-semibold leading-none tracking-tight">
                 bandungtechjobs
