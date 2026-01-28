@@ -73,14 +73,20 @@ const Index = () => {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="border-b bg-muted/30">
-          <div className="container py-12 md:py-16">
+      {/* Hero Section */}
+        <section className="relative overflow-hidden border-b bg-gradient-to-br from-primary via-primary/90 to-secondary">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(var(--highlight)/0.3),_transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_hsl(var(--secondary)/0.4),_transparent_50%)]" />
+          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-highlight/20 blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 h-48 w-48 rounded-full bg-secondary/30 blur-3xl" />
+          
+          <div className="container relative py-12 md:py-16">
             <div className="max-w-2xl space-y-4">
-              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+              <h1 className="text-3xl font-bold tracking-tight text-primary-foreground md:text-4xl">
                 Find roles within local tech teams
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-primary-foreground/80">
                 Discover opportunities at Bandung-based tech companies.
               </p>
             </div>
@@ -97,30 +103,30 @@ const Index = () => {
             {/* Stats */}
             <div className="mt-6 flex flex-wrap gap-6">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                  <Building2 className="h-4 w-4 text-primary" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20">
+                  <Building2 className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">{companies.length}</p>
-                  <p className="text-xs text-muted-foreground">Companies hiring</p>
+                  <p className="text-xl font-semibold text-primary-foreground">{companies.length}</p>
+                  <p className="text-xs text-primary-foreground/70">Companies hiring</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary/15">
-                  <Briefcase className="h-4 w-4 text-secondary" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20">
+                  <Briefcase className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">{totalRoles}</p>
-                  <p className="text-xs text-muted-foreground">Open roles</p>
+                  <p className="text-xl font-semibold text-primary-foreground">{totalRoles}</p>
+                  <p className="text-xs text-primary-foreground/70">Open roles</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-                  <Users className="h-4 w-4 text-muted-foreground" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20">
+                  <Users className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold">Bandung</p>
-                  <p className="text-xs text-muted-foreground">West Java</p>
+                  <p className="text-xl font-semibold text-primary-foreground">Bandung</p>
+                  <p className="text-xs text-primary-foreground/70">West Java</p>
                 </div>
               </div>
             </div>
