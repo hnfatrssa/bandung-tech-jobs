@@ -72,15 +72,15 @@ const RoleDetail = () => {
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <RoleTag category={role.category} />
-                  <WorkModeBadge mode={role.workMode} />
-                  {role.salary && <SalaryBadge salary={role.salary} />}
+                  <RoleTag category={role.category} variant="hero" />
+                  <WorkModeBadge mode={role.workMode} variant="hero" />
+                  {role.salary && <SalaryBadge salary={role.salary} variant="hero" />}
                 </div>
 
                 {role.skills.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
                     {role.skills.map((skill) => (
-                      <SkillTag key={skill} skill={skill} />
+                      <SkillTag key={skill} skill={skill} variant="hero" />
                     ))}
                   </div>
                 )}
