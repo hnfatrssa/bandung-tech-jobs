@@ -89,23 +89,19 @@ const Index = () => {
 
       <main className="flex-1">
       {/* Hero Section */}
-        <section className="relative overflow-hidden border-b bg-[hsl(221,83%,30%)]">
-          {/* Dynamic fluid gradient background using Jabar colors (Blue, Green, Yellow) */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(221,83%,35%)] via-[hsl(221,70%,40%)] to-[hsl(221,80%,30%)]" />
+        <section className="relative overflow-hidden border-b bg-[hsl(221,75%,35%)]">
+          {/* Dynamic fluid gradient background using Jabar colors */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(221,80%,40%)] via-[hsl(280,60%,45%)] to-[hsl(330,70%,50%)]" />
           
-          {/* Fluid blob shapes - Jabar Blue */}
-          <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-[hsl(221,85%,50%)] blur-3xl opacity-80" />
-          <div className="absolute right-1/4 -top-20 h-80 w-80 rounded-full bg-[hsl(210,90%,55%)] blur-3xl opacity-70" />
-          
-          {/* Fluid blob shapes - Jabar Green */}
-          <div className="absolute left-1/3 bottom-0 h-80 w-80 rounded-full bg-[hsl(142,76%,40%)] blur-3xl opacity-75" />
-          <div className="absolute -right-10 top-1/3 h-72 w-72 rounded-full bg-[hsl(160,70%,45%)] blur-3xl opacity-60" />
-          
-          {/* Fluid blob shapes - Jabar Yellow accent */}
-          <div className="absolute right-0 -bottom-10 h-64 w-64 rounded-full bg-[hsl(45,93%,50%)] blur-3xl opacity-40" />
+          {/* Fluid blob shapes */}
+          <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-[hsl(200,90%,55%)] blur-3xl opacity-70" />
+          <div className="absolute left-1/4 top-1/2 h-96 w-96 rounded-full bg-[hsl(142,70%,45%)] blur-3xl opacity-60" />
+          <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-[hsl(45,90%,55%)] blur-3xl opacity-50" />
+          <div className="absolute -bottom-20 right-1/4 h-80 w-80 rounded-full bg-[hsl(221,85%,50%)] blur-3xl opacity-60" />
+          <div className="absolute bottom-0 -left-10 h-64 w-64 rounded-full bg-[hsl(180,70%,45%)] blur-3xl opacity-50" />
           
           {/* Subtle overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(221,83%,20%,0.3)] to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(221,80%,25%,0.4)] to-transparent" />
           
           <div className="container relative py-12 md:py-16">
             <div className="max-w-2xl space-y-4">
