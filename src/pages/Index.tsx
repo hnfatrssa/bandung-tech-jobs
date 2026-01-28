@@ -1,11 +1,13 @@
 import { useState, useMemo } from "react";
-import { Briefcase, Building2, Users, ArrowUpDown } from "lucide-react";
+import { Briefcase, Building2, Users, ArrowUpDown, SlidersHorizontal, X } from "lucide-react";
 import { companies, Company } from "@/lib/data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CompanyCard } from "@/components/CompanyCard";
 import { FilterBar } from "@/components/FilterBar";
 import { SearchBar } from "@/components/SearchBar";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   Select,
   SelectContent,
@@ -222,8 +224,44 @@ const Index = () => {
         {/* Filters & Listings */}
         <section className="container py-8">
           <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-            {/* Sidebar Filters */}
-            <aside className="lg:sticky lg:top-20 lg:self-start">
+            {/* Mobile Filter Button */}
+            <div className="lg:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="w-full gap-2">
+                    <SlidersHorizontal className="h-4 w-4" />
+                    Filter roles
+                    {(selectedCategories.length + selectedWorkModes.length + selectedCompanyTypes.length + selectedSkills.length + (salaryRange[0] > 5 || salaryRange[1] < 40 ? 1 : 0)) > 0 && (
+                      <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                        {selectedCategories.length + selectedWorkModes.length + selectedCompanyTypes.length + selectedSkills.length + (salaryRange[0] > 5 || salaryRange[1] < 40 ? 1 : 0)}
+                      </span>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[320px] overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>Filter roles</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4">
+                    <FilterBar
+                      selectedCategories={selectedCategories}
+                      selectedWorkModes={selectedWorkModes}
+                      selectedCompanyTypes={selectedCompanyTypes}
+                      selectedSkills={selectedSkills}
+                      salaryRange={salaryRange}
+                      onCategoriesChange={setSelectedCategories}
+                      onWorkModesChange={setSelectedWorkModes}
+                      onCompanyTypesChange={setSelectedCompanyTypes}
+                      onSkillsChange={setSelectedSkills}
+                      onSalaryRangeChange={setSalaryRange}
+                    />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+
+            {/* Desktop Sidebar Filters */}
+            <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start">
               <div className="rounded-xl border bg-card p-4">
                 <h2 className="mb-4 text-sm font-semibold">Filter roles</h2>
                 <FilterBar
