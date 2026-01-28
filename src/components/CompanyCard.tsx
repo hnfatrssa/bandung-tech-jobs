@@ -13,7 +13,7 @@ export function CompanyCard({ company, defaultExpanded = false }: CompanyCardPro
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-company-card hover-elevate hover-border-accent">
+    <div className="overflow-hidden rounded-xl border bg-company-card hover-elevate hover-border-accent press-effect">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex w-full items-start justify-between gap-4 p-5 text-left transition-colors duration-micro ease-calm hover:bg-muted/40"
@@ -72,8 +72,14 @@ export function CompanyCard({ company, defaultExpanded = false }: CompanyCardPro
             )}
           >
             <div className="space-y-2">
-              {company.roles.map((role) => (
-                <RoleItem key={role.id} role={role} companyId={company.id} />
+              {company.roles.map((role, index) => (
+                <div
+                  key={role.id}
+                  className="animate-slide-in"
+                  style={{ animationDelay: `${index * 40}ms` }}
+                >
+                  <RoleItem role={role} companyId={company.id} />
+                </div>
               ))}
             </div>
           </div>

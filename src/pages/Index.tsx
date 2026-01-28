@@ -96,18 +96,18 @@ const Index = () => {
           {/* Dynamic fluid gradient background using Jabar colors */}
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(221,80%,40%)] via-[hsl(280,60%,45%)] to-[hsl(330,70%,50%)]" />
           
-          {/* Fluid blob shapes */}
-          <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-[hsl(200,90%,55%)] blur-3xl opacity-70" />
-          <div className="absolute left-1/4 top-1/2 h-96 w-96 rounded-full bg-[hsl(142,70%,45%)] blur-3xl opacity-60" />
-          <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-[hsl(45,90%,55%)] blur-3xl opacity-50" />
-          <div className="absolute -bottom-20 right-1/4 h-80 w-80 rounded-full bg-[hsl(221,85%,50%)] blur-3xl opacity-60" />
-          <div className="absolute bottom-0 -left-10 h-64 w-64 rounded-full bg-[hsl(180,70%,45%)] blur-3xl opacity-50" />
+          {/* Animated floating blob shapes */}
+          <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-[hsl(200,90%,55%)] blur-3xl opacity-70 animate-blob-float" />
+          <div className="absolute left-1/4 top-1/2 h-96 w-96 rounded-full bg-[hsl(142,70%,45%)] blur-3xl opacity-60 animate-blob-float [animation-delay:2s]" />
+          <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-[hsl(45,90%,55%)] blur-3xl opacity-50 animate-blob-float [animation-delay:4s]" />
+          <div className="absolute -bottom-20 right-1/4 h-80 w-80 rounded-full bg-[hsl(221,85%,50%)] blur-3xl opacity-60 animate-blob-float [animation-delay:6s]" />
+          <div className="absolute bottom-0 -left-10 h-64 w-64 rounded-full bg-[hsl(180,70%,45%)] blur-3xl opacity-50 animate-blob-float [animation-delay:8s]" />
           
           {/* Subtle overlay for depth */}
           <div className="absolute inset-0 bg-gradient-to-t from-[hsl(221,80%,25%,0.4)] to-transparent" />
           
           <div className="container relative py-12 md:py-16">
-            <div className="max-w-2xl space-y-4">
+            <div className="max-w-2xl space-y-4 animate-hero-enter">
               <h1 className="text-3xl font-bold tracking-tight text-primary-foreground md:text-4xl">
                 Find roles within local tech teams
               </h1>
@@ -117,7 +117,7 @@ const Index = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="mt-8 max-w-xl">
+            <div className="mt-8 max-w-xl animate-hero-enter [animation-delay:100ms]">
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}
@@ -127,7 +127,7 @@ const Index = () => {
 
             {/* Stats */}
             <div className="mt-6 flex flex-wrap gap-6">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 animate-stat-pop [animation-delay:200ms]">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20">
                   <Building2 className="h-4 w-4 text-primary-foreground" />
                 </div>
@@ -136,7 +136,7 @@ const Index = () => {
                   <p className="text-xs text-primary-foreground/70">Companies hiring</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 animate-stat-pop [animation-delay:300ms]">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20">
                   <Briefcase className="h-4 w-4 text-primary-foreground" />
                 </div>
@@ -145,7 +145,7 @@ const Index = () => {
                   <p className="text-xs text-primary-foreground/70">Open roles</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 animate-stat-pop [animation-delay:400ms]">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20">
                   <Users className="h-4 w-4 text-primary-foreground" />
                 </div>
@@ -205,11 +205,16 @@ const Index = () => {
                 {filteredCompanies.length > 0 ? (
                   filteredCompanies.map((company, index) =>
                     company ? (
-                      <CompanyCard
+                      <div
                         key={company.id}
-                        company={company}
-                        defaultExpanded={true}
-                      />
+                        className="animate-card-enter"
+                        style={{ animationDelay: `${Math.min(index * 50, 200)}ms` }}
+                      >
+                        <CompanyCard
+                          company={company}
+                          defaultExpanded={true}
+                        />
+                      </div>
                     ) : null
                   )
                 ) : (

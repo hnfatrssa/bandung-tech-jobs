@@ -87,18 +87,50 @@ export default {
         },
         // Subtle fade with minimal vertical motion (4-6px)
         "fade-in-up": {
-          from: { opacity: "0", transform: "translateY(5px)" },
+          from: { opacity: "0", transform: "translateY(6px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
         // Cross-fade for filter changes
         "cross-fade": {
-          from: { opacity: "0.9" },
+          from: { opacity: "0.85" },
           to: { opacity: "1" },
         },
         // Page transition fade
         "page-enter": {
-          from: { opacity: "0", transform: "translateY(6px)" },
+          from: { opacity: "0", transform: "translateY(8px)" },
           to: { opacity: "1", transform: "translateY(0)" },
+        },
+        // Staggered reveal for role items
+        "slide-in": {
+          from: { opacity: "0", transform: "translateX(-8px)" },
+          to: { opacity: "1", transform: "translateX(0)" },
+        },
+        // Hero section entrance
+        "hero-enter": {
+          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        // Stat counter pop
+        "stat-pop": {
+          "0%": { opacity: "0", transform: "scale(0.9)" },
+          "70%": { transform: "scale(1.02)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        // Blob floating animation for hero
+        "blob-float": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "33%": { transform: "translate(8px, -8px) scale(1.02)" },
+          "66%": { transform: "translate(-4px, 4px) scale(0.98)" },
+        },
+        // Card list stagger entrance
+        "card-enter": {
+          from: { opacity: "0", transform: "translateY(12px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        // Shimmer effect for loading states
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
       animation: {
@@ -108,17 +140,31 @@ export default {
         // Role items fade in: 180ms
         "fade-in-up": "fade-in-up 180ms cubic-bezier(0.2, 0, 0, 1)",
         // Filter cross-fade: 150ms
-        "cross-fade": "cross-fade 150ms ease-out",
+        "cross-fade": "cross-fade 180ms ease-out",
         // Page transitions: 200ms
-        "page-enter": "page-enter 200ms cubic-bezier(0.2, 0, 0, 1)",
+        "page-enter": "page-enter 250ms cubic-bezier(0.2, 0, 0, 1)",
+        // Role item slide in
+        "slide-in": "slide-in 200ms cubic-bezier(0.2, 0, 0, 1)",
+        // Hero entrance - slightly longer for impact
+        "hero-enter": "hero-enter 400ms cubic-bezier(0.2, 0, 0, 1)",
+        // Stat pop animation
+        "stat-pop": "stat-pop 300ms cubic-bezier(0.2, 0, 0, 1)",
+        // Blob floating - slow, ambient
+        "blob-float": "blob-float 12s ease-in-out infinite",
+        // Card entrance
+        "card-enter": "card-enter 250ms cubic-bezier(0.2, 0, 0, 1)",
+        // Shimmer
+        "shimmer": "shimmer 2s linear infinite",
       },
       // Calm transition defaults
       transitionDuration: {
         "micro": "150ms",
         "expand": "200ms",
+        "smooth": "250ms",
       },
       transitionTimingFunction: {
         "calm": "cubic-bezier(0.2, 0, 0, 1)",
+        "smooth": "cubic-bezier(0.4, 0, 0.2, 1)",
       },
     },
   },
