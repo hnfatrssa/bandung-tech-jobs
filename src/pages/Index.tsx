@@ -89,12 +89,19 @@ const Index = () => {
 
       <main className="flex-1">
       {/* Hero Section */}
-        <section className="relative overflow-hidden border-b bg-gradient-to-br from-[hsl(221,70%,40%)] via-[hsl(221,60%,45%)] to-[hsl(142,60%,40%)]">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(45,80%,50%,0.2),_transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_hsl(142,60%,45%,0.4),_transparent_50%)]" />
-          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[hsl(45,80%,50%,0.15)] blur-3xl" />
-          <div className="absolute bottom-0 left-1/4 h-48 w-48 rounded-full bg-[hsl(142,60%,45%,0.25)] blur-3xl" />
+        <section className="relative overflow-hidden border-b bg-[hsl(221,75%,35%)]">
+          {/* Dynamic fluid gradient background using Jabar colors */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(221,80%,40%)] via-[hsl(280,60%,45%)] to-[hsl(330,70%,50%)]" />
+          
+          {/* Fluid blob shapes */}
+          <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-[hsl(200,90%,55%)] blur-3xl opacity-70" />
+          <div className="absolute left-1/4 top-1/2 h-96 w-96 rounded-full bg-[hsl(142,70%,45%)] blur-3xl opacity-60" />
+          <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-[hsl(45,90%,55%)] blur-3xl opacity-50" />
+          <div className="absolute -bottom-20 right-1/4 h-80 w-80 rounded-full bg-[hsl(221,85%,50%)] blur-3xl opacity-60" />
+          <div className="absolute bottom-0 -left-10 h-64 w-64 rounded-full bg-[hsl(180,70%,45%)] blur-3xl opacity-50" />
+          
+          {/* Subtle overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(221,80%,25%,0.4)] to-transparent" />
           
           <div className="container relative py-12 md:py-16">
             <div className="max-w-2xl space-y-4">
