@@ -81,8 +81,7 @@ const Index = () => {
                 Find roles within local tech teams
               </h1>
               <p className="text-lg text-muted-foreground">
-                Discover opportunities at Bandung-based tech companies. 
-                Browse by company, explore open roles.
+                Discover opportunities at Bandung-based tech companies.
               </p>
             </div>
 
