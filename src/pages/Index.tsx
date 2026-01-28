@@ -7,19 +7,28 @@ import { CompanyCard } from "@/components/CompanyCard";
 import { FilterBar } from "@/components/FilterBar";
 import { SearchBar } from "@/components/SearchBar";
 
+// Parse salary string like "IDR 18-25 jt/bulan" to get min value in millions
+function parseSalaryMin(salary: string | undefined): number | null {
+  if (!salary) return null;
+  const match = salary.match(/(\d+)-(\d+)/);
+  if (match) return parseInt(match[1], 10);
+  return null;
+}
+
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedWorkMode, setSelectedWorkMode] = useState<string | null>(null);
-  const [selectedCompanyType, setSelectedCompanyType] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedWorkModes, setSelectedWorkModes] = useState<string[]>([]);
+  const [selectedCompanyTypes, setSelectedCompanyTypes] = useState<string[]>([]);
+  const [salaryRange, setSalaryRange] = useState<[number, number]>([5, 40]);
 
   const filteredCompanies = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
 
     return companies
       .map((company) => {
-        // Filter company type first
-        if (selectedCompanyType && company.type !== selectedCompanyType) {
+        // Filter company type first (multi-select)
+        if (selectedCompanyTypes.length > 0 && !selectedCompanyTypes.includes(company.type)) {
           return null;
         }
 
@@ -30,8 +39,14 @@ const Index = () => {
 
         // Filter roles within company
         const filteredRoles = company.roles.filter((role) => {
-          if (selectedCategory && role.category !== selectedCategory) return false;
-          if (selectedWorkMode && role.workMode !== selectedWorkMode) return false;
+          // Multi-select category filter
+          if (selectedCategories.length > 0 && !selectedCategories.includes(role.category)) return false;
+          // Multi-select work mode filter
+          if (selectedWorkModes.length > 0 && !selectedWorkModes.includes(role.workMode)) return false;
+          
+          // Salary range filter
+          const salaryMin = parseSalaryMin(role.salary);
+          if (salaryMin !== null && (salaryMin < salaryRange[0] || salaryMin > salaryRange[1])) return false;
           
           // If search query exists, check if role matches
           if (query !== "") {
@@ -56,7 +71,7 @@ const Index = () => {
         };
       })
       .filter(Boolean);
-  }, [searchQuery, selectedCategory, selectedWorkMode, selectedCompanyType]);
+  }, [searchQuery, selectedCategories, selectedWorkModes, selectedCompanyTypes, salaryRange]);
 
   const totalRoles = useMemo(() => {
     return companies.reduce((sum, company) => sum + company.roles.length, 0);
@@ -66,7 +81,7 @@ const Index = () => {
     return filteredCompanies.reduce((sum, company) => sum + (company?.roles.length || 0), 0);
   }, [filteredCompanies]);
 
-  const hasActiveFilters = searchQuery.length > 0 || selectedCategory !== null || selectedWorkMode !== null || selectedCompanyType !== null;
+  const hasActiveFilters = searchQuery.length > 0 || selectedCategories.length > 0 || selectedWorkModes.length > 0 || selectedCompanyTypes.length > 0 || salaryRange[0] > 5 || salaryRange[1] < 40;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -141,12 +156,14 @@ const Index = () => {
               <div className="rounded-xl border bg-card p-4">
                 <h2 className="mb-4 text-sm font-semibold">Filter roles</h2>
                 <FilterBar
-                  selectedCategory={selectedCategory}
-                  selectedWorkMode={selectedWorkMode}
-                  selectedCompanyType={selectedCompanyType}
-                  onCategoryChange={setSelectedCategory}
-                  onWorkModeChange={setSelectedWorkMode}
-                  onCompanyTypeChange={setSelectedCompanyType}
+                  selectedCategories={selectedCategories}
+                  selectedWorkModes={selectedWorkModes}
+                  selectedCompanyTypes={selectedCompanyTypes}
+                  salaryRange={salaryRange}
+                  onCategoriesChange={setSelectedCategories}
+                  onWorkModesChange={setSelectedWorkModes}
+                  onCompanyTypesChange={setSelectedCompanyTypes}
+                  onSalaryRangeChange={setSalaryRange}
                 />
               </div>
             </aside>
@@ -170,7 +187,7 @@ const Index = () => {
 
               {/* Company Cards - cross-fade on filter changes */}
               <div 
-                key={`${searchQuery}-${selectedCategory}-${selectedWorkMode}-${selectedCompanyType}`}
+                key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${salaryRange.join('-')}`}
                 className="animate-cross-fade space-y-3"
               >
                 {filteredCompanies.length > 0 ? (
