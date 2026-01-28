@@ -20,6 +20,7 @@ const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedWorkModes, setSelectedWorkModes] = useState<string[]>([]);
   const [selectedCompanyTypes, setSelectedCompanyTypes] = useState<string[]>([]);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [salaryRange, setSalaryRange] = useState<[number, number]>([5, 40]);
 
   const filteredCompanies = useMemo(() => {
@@ -43,6 +44,8 @@ const Index = () => {
           if (selectedCategories.length > 0 && !selectedCategories.includes(role.category)) return false;
           // Multi-select work mode filter
           if (selectedWorkModes.length > 0 && !selectedWorkModes.includes(role.workMode)) return false;
+          // Multi-select skills filter
+          if (selectedSkills.length > 0 && !selectedSkills.some(s => role.skills.includes(s))) return false;
           
           // Salary range filter
           const salaryMin = parseSalaryMin(role.salary);
@@ -71,7 +74,7 @@ const Index = () => {
         };
       })
       .filter(Boolean);
-  }, [searchQuery, selectedCategories, selectedWorkModes, selectedCompanyTypes, salaryRange]);
+  }, [searchQuery, selectedCategories, selectedWorkModes, selectedCompanyTypes, selectedSkills, salaryRange]);
 
   const totalRoles = useMemo(() => {
     return companies.reduce((sum, company) => sum + company.roles.length, 0);
@@ -81,7 +84,7 @@ const Index = () => {
     return filteredCompanies.reduce((sum, company) => sum + (company?.roles.length || 0), 0);
   }, [filteredCompanies]);
 
-  const hasActiveFilters = searchQuery.length > 0 || selectedCategories.length > 0 || selectedWorkModes.length > 0 || selectedCompanyTypes.length > 0 || salaryRange[0] > 5 || salaryRange[1] < 40;
+  const hasActiveFilters = searchQuery.length > 0 || selectedCategories.length > 0 || selectedWorkModes.length > 0 || selectedCompanyTypes.length > 0 || selectedSkills.length > 0 || salaryRange[0] > 5 || salaryRange[1] < 40;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -166,10 +169,12 @@ const Index = () => {
                   selectedCategories={selectedCategories}
                   selectedWorkModes={selectedWorkModes}
                   selectedCompanyTypes={selectedCompanyTypes}
+                  selectedSkills={selectedSkills}
                   salaryRange={salaryRange}
                   onCategoriesChange={setSelectedCategories}
                   onWorkModesChange={setSelectedWorkModes}
                   onCompanyTypesChange={setSelectedCompanyTypes}
+                  onSkillsChange={setSelectedSkills}
                   onSalaryRangeChange={setSalaryRange}
                 />
               </div>
@@ -194,7 +199,7 @@ const Index = () => {
 
               {/* Company Cards - cross-fade on filter changes */}
               <div 
-                key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${salaryRange.join('-')}`}
+                key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${selectedSkills.join(',')}-${salaryRange.join('-')}`}
                 className="animate-cross-fade space-y-3"
               >
                 {filteredCompanies.length > 0 ? (

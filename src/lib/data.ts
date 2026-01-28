@@ -4,6 +4,7 @@ export interface Role {
   workMode: "Onsite" | "Hybrid" | "Remote";
   salary?: string;
   category: "Engineering" | "Design" | "Product" | "Data" | "QA" | "Platform";
+  skills: string[];
   summary: string;
   responsibilities: string[];
   requirements: string[];
@@ -33,6 +34,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 18-25M/month",
         category: "Engineering",
+        skills: ["React", "Next.js", "TypeScript", "CSS"],
         summary: "Lead frontend development for citizen-facing digital services using React and Next.js.",
         responsibilities: [
           "Develop and maintain high-quality React applications",
@@ -54,6 +56,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 15-22M/month",
         category: "Engineering",
+        skills: ["Go", "Python", "PostgreSQL", "Redis"],
         summary: "Build scalable APIs and microservices for government digital infrastructure.",
         responsibilities: [
           "Design and implement RESTful APIs",
@@ -75,6 +78,7 @@ export const companies: Company[] = [
         workMode: "Onsite",
         salary: "IDR 20-28M/month",
         category: "Product",
+        skills: ["Agile", "Analytics", "User Research"],
         summary: "Drive product strategy for public service applications serving millions of citizens.",
         responsibilities: [
           "Define product roadmap and prioritize features",
@@ -105,6 +109,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 22-32M/month",
         category: "Engineering",
+        skills: ["Kotlin", "Jetpack Compose", "Android"],
         summary: "Build features for Android app used by millions of Indonesian merchants.",
         responsibilities: [
           "Develop new features using Kotlin and Jetpack Compose",
@@ -126,6 +131,7 @@ export const companies: Company[] = [
         workMode: "Remote",
         salary: "IDR 18-28M/month",
         category: "Data",
+        skills: ["Python", "SQL", "Spark", "Airflow"],
         summary: "Build data pipelines powering analytics for Indonesia's e-commerce ecosystem.",
         responsibilities: [
           "Design and maintain ETL pipelines",
@@ -156,6 +162,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 14-20M/month",
         category: "Engineering",
+        skills: ["JavaScript", "TypeScript", "Video.js", "HLS"],
         summary: "Build engaging video player experiences for web and smart TV platforms.",
         responsibilities: [
           "Develop video player features and controls",
@@ -186,6 +193,7 @@ export const companies: Company[] = [
         workMode: "Onsite",
         salary: "IDR 25-35M/month",
         category: "Engineering",
+        skills: ["Java", "Go", "Distributed Systems", "PCI-DSS"],
         summary: "Architect and build high-throughput payment processing systems.",
         responsibilities: [
           "Design distributed transaction systems",
@@ -207,6 +215,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 12-18M/month",
         category: "QA",
+        skills: ["Selenium", "Cypress", "API Testing"],
         summary: "Ensure quality of critical payment flows through automated testing.",
         responsibilities: [
           "Design and execute test plans",
@@ -237,6 +246,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 10-16M/month",
         category: "Engineering",
+        skills: ["React", "Node.js", "Cloud", "Full Stack"],
         summary: "Build end-to-end solutions for enterprise clients across industries.",
         responsibilities: [
           "Develop full stack features using React and Node.js",
@@ -258,6 +268,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 8-14M/month",
         category: "Design",
+        skills: ["Figma", "Design Systems", "User Research"],
         summary: "Design intuitive interfaces for enterprise software products.",
         responsibilities: [
           "Create wireframes and high-fidelity mockups",
@@ -288,6 +299,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 15-22M/month",
         category: "Platform",
+        skills: ["AWS", "Kubernetes", "Terraform", "CI/CD"],
         summary: "Manage cloud infrastructure for government and enterprise clients.",
         responsibilities: [
           "Design and maintain CI/CD pipelines",
@@ -318,6 +330,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 18-26M/month",
         category: "Engineering",
+        skills: ["Swift", "SwiftUI", "iOS", "UIKit"],
         summary: "Build delightful mobile experiences for Flip's iOS app users.",
         responsibilities: [
           "Develop features using Swift and SwiftUI",
@@ -339,6 +352,7 @@ export const companies: Company[] = [
         workMode: "Hybrid",
         salary: "IDR 16-24M/month",
         category: "Design",
+        skills: ["Figma", "Mobile Design", "Prototyping"],
         summary: "Design simple and trustworthy experiences for financial products.",
         responsibilities: [
           "Design end-to-end user flows",
@@ -361,3 +375,8 @@ export const companies: Company[] = [
 export const categories = ["Engineering", "Design", "Product", "Data", "QA", "Platform"] as const;
 export const workModes = ["Onsite", "Hybrid", "Remote"] as const;
 export const companyTypes = ["Startup", "Agency", "Software House", "Enterprise"] as const;
+
+// Extract all unique skills from roles
+export const allSkills = Array.from(
+  new Set(companies.flatMap(c => c.roles.flatMap(r => r.skills)))
+).sort();

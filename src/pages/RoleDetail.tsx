@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { RoleTag } from "@/components/RoleTag";
 import { WorkModeBadge } from "@/components/WorkModeBadge";
 import { SalaryBadge } from "@/components/SalaryBadge";
+import { SkillTag } from "@/components/SkillTag";
 
 const RoleDetail = () => {
   const { companyId, roleId } = useParams();
@@ -61,6 +62,14 @@ const RoleDetail = () => {
                   <WorkModeBadge mode={role.workMode} />
                   {role.salary && <SalaryBadge salary={role.salary} />}
                 </div>
+
+                {role.skills.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {role.skills.map((skill) => (
+                      <SkillTag key={skill} skill={skill} />
+                    ))}
+                  </div>
+                )}
 
                 <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
                   {role.title}
