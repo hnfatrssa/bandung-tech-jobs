@@ -71,12 +71,6 @@ const RoleDetail = () => {
           <div className="container relative py-8 md:py-12">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <RoleTag category={role.category} variant="hero" />
-                  <WorkModeBadge mode={role.workMode} variant="hero" />
-                  {role.salary && <SalaryBadge salary={role.salary} variant="hero" />}
-                </div>
-
                 <h1 className="text-2xl font-bold tracking-tight text-primary-foreground md:text-3xl">
                   {role.title}
                 </h1>
@@ -88,6 +82,12 @@ const RoleDetail = () => {
                     ))}
                   </div>
                 )}
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <RoleTag category={role.category} variant="hero" />
+                  <WorkModeBadge mode={role.workMode} variant="hero" />
+                  {role.salary && <SalaryBadge salary={role.salary} variant="hero" />}
+                </div>
 
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/20 text-primary-foreground">
