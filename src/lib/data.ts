@@ -31,7 +31,7 @@ export const companies: Company[] = [
         id: "jds-fe-1",
         title: "Senior Frontend Engineer",
         workMode: "Hybrid",
-        salary: "IDR 18-25 jt/bulan",
+        salary: "IDR 18-25M/month",
         category: "Engineering",
         summary: "Lead frontend development for citizen-facing digital services using React and Next.js.",
         responsibilities: [
@@ -52,7 +52,7 @@ export const companies: Company[] = [
         id: "jds-be-1",
         title: "Backend Engineer",
         workMode: "Hybrid",
-        salary: "IDR 15-22 jt/bulan",
+        salary: "IDR 15-22M/month",
         category: "Engineering",
         summary: "Build scalable APIs and microservices for government digital infrastructure.",
         responsibilities: [
@@ -73,7 +73,7 @@ export const companies: Company[] = [
         id: "jds-pm-1",
         title: "Product Manager",
         workMode: "Onsite",
-        salary: "IDR 20-28 jt/bulan",
+        salary: "IDR 20-28M/month",
         category: "Product",
         summary: "Drive product strategy for public service applications serving millions of citizens.",
         responsibilities: [
@@ -103,7 +103,7 @@ export const companies: Company[] = [
         id: "bl-mobile-1",
         title: "Senior Mobile Engineer (Android)",
         workMode: "Hybrid",
-        salary: "IDR 22-32 jt/bulan",
+        salary: "IDR 22-32M/month",
         category: "Engineering",
         summary: "Build features for Android app used by millions of Indonesian merchants.",
         responsibilities: [
@@ -124,7 +124,7 @@ export const companies: Company[] = [
         id: "bl-data-1",
         title: "Data Engineer",
         workMode: "Remote",
-        salary: "IDR 18-28 jt/bulan",
+        salary: "IDR 18-28M/month",
         category: "Data",
         summary: "Build data pipelines powering analytics for Indonesia's e-commerce ecosystem.",
         responsibilities: [
@@ -154,7 +154,7 @@ export const companies: Company[] = [
         id: "vidio-fe-1",
         title: "Frontend Engineer",
         workMode: "Hybrid",
-        salary: "IDR 14-20 jt/bulan",
+        salary: "IDR 14-20M/month",
         category: "Engineering",
         summary: "Build engaging video player experiences for web and smart TV platforms.",
         responsibilities: [
@@ -184,7 +184,7 @@ export const companies: Company[] = [
         id: "doku-be-1",
         title: "Staff Backend Engineer",
         workMode: "Onsite",
-        salary: "IDR 25-35 jt/bulan",
+        salary: "IDR 25-35M/month",
         category: "Engineering",
         summary: "Architect and build high-throughput payment processing systems.",
         responsibilities: [
@@ -205,7 +205,7 @@ export const companies: Company[] = [
         id: "doku-qa-1",
         title: "QA Engineer",
         workMode: "Hybrid",
-        salary: "IDR 12-18 jt/bulan",
+        salary: "IDR 12-18M/month",
         category: "QA",
         summary: "Ensure quality of critical payment flows through automated testing.",
         responsibilities: [
@@ -235,7 +235,7 @@ export const companies: Company[] = [
         id: "sagara-fullstack-1",
         title: "Full Stack Developer",
         workMode: "Hybrid",
-        salary: "IDR 10-16 jt/bulan",
+        salary: "IDR 10-16M/month",
         category: "Engineering",
         summary: "Build end-to-end solutions for enterprise clients across industries.",
         responsibilities: [
@@ -256,7 +256,7 @@ export const companies: Company[] = [
         id: "sagara-ui-1",
         title: "UI/UX Designer",
         workMode: "Hybrid",
-        salary: "IDR 8-14 jt/bulan",
+        salary: "IDR 8-14M/month",
         category: "Design",
         summary: "Design intuitive interfaces for enterprise software products.",
         responsibilities: [
@@ -286,7 +286,7 @@ export const companies: Company[] = [
         id: "xtremax-devops-1",
         title: "DevOps Engineer",
         workMode: "Hybrid",
-        salary: "IDR 15-22 jt/bulan",
+        salary: "IDR 15-22M/month",
         category: "Platform",
         summary: "Manage cloud infrastructure for government and enterprise clients.",
         responsibilities: [
@@ -316,7 +316,7 @@ export const companies: Company[] = [
         id: "flip-ios-1",
         title: "iOS Engineer",
         workMode: "Hybrid",
-        salary: "IDR 18-26 jt/bulan",
+        salary: "IDR 18-26M/month",
         category: "Engineering",
         summary: "Build delightful mobile experiences for Flip's iOS app users.",
         responsibilities: [
@@ -337,7 +337,7 @@ export const companies: Company[] = [
         id: "flip-product-1",
         title: "Product Designer",
         workMode: "Hybrid",
-        salary: "IDR 16-24 jt/bulan",
+        salary: "IDR 16-24M/month",
         category: "Design",
         summary: "Design simple and trustworthy experiences for financial products.",
         responsibilities: [
