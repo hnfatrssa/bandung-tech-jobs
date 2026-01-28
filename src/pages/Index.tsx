@@ -66,7 +66,7 @@ const Index = () => {
     return filteredCompanies.reduce((sum, company) => sum + (company?.roles.length || 0), 0);
   }, [filteredCompanies]);
 
-  const hasActiveFilters = searchQuery || selectedCategory || selectedWorkMode || selectedCompanyType;
+  const hasActiveFilters = searchQuery.length > 0 || selectedCategory !== null || selectedWorkMode !== null || selectedCompanyType !== null;
 
   return (
     <div className="flex min-h-screen flex-col">
