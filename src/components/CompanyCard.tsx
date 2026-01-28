@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, MapPin, Building2 } from "lucide-react";
 import { Company } from "@/lib/data";
 import { RoleItem } from "./RoleItem";
@@ -14,10 +13,10 @@ export function CompanyCard({ company, defaultExpanded = false }: CompanyCardPro
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-company-card shadow-sm">
+    <div className="overflow-hidden rounded-xl border bg-company-card hover-elevate hover-border-accent">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex w-full items-start justify-between gap-4 p-5 text-left transition-colors hover:bg-muted/50"
+        className="flex w-full items-start justify-between gap-4 p-5 text-left transition-colors duration-micro ease-calm hover:bg-muted/40"
       >
         <div className="flex-1 space-y-2">
           <div className="flex items-start gap-3">
@@ -51,31 +50,35 @@ export function CompanyCard({ company, defaultExpanded = false }: CompanyCardPro
           </span>
           <ChevronDown
             className={cn(
-              "h-5 w-5 text-muted-foreground transition-transform duration-200",
+              "h-5 w-5 text-muted-foreground transition-transform duration-expand ease-calm",
               isExpanded && "rotate-180"
             )}
           />
         </div>
       </button>
 
-      <AnimatePresence initial={false}>
-        {isExpanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-          >
-            <div className="border-t bg-muted/30 p-4">
-              <div className="space-y-2">
-                {company.roles.map((role) => (
-                  <RoleItem key={role.id} role={role} companyId={company.id} />
-                ))}
-              </div>
-            </div>
-          </motion.div>
+      {/* Expand/collapse with calm animation - entire group as one unit */}
+      <div
+        className={cn(
+          "grid transition-[grid-template-rows] duration-expand ease-calm",
+          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         )}
-      </AnimatePresence>
+      >
+        <div className="overflow-hidden">
+          <div
+            className={cn(
+              "border-t bg-muted/30 p-4 transition-opacity duration-expand ease-calm",
+              isExpanded ? "opacity-100" : "opacity-0"
+            )}
+          >
+            <div className="space-y-2">
+              {company.roles.map((role) => (
+                <RoleItem key={role.id} role={role} companyId={company.id} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

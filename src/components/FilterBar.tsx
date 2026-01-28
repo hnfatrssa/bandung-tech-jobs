@@ -38,7 +38,7 @@ export function FilterBar({
                 onCategoryChange(selectedCategory === category ? null : category)
               }
               className={cn(
-                "h-8 rounded-full text-xs transition-all",
+                "h-8 rounded-full text-xs transition-all duration-micro ease-calm",
                 selectedCategory === category &&
                   "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground"
               )}
@@ -64,7 +64,7 @@ export function FilterBar({
                 onWorkModeChange(selectedWorkMode === mode ? null : mode)
               }
               className={cn(
-                "h-8 rounded-full text-xs transition-all",
+                "h-8 rounded-full text-xs transition-all duration-micro ease-calm",
                 selectedWorkMode === mode &&
                   "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground"
               )}
@@ -90,7 +90,7 @@ export function FilterBar({
                 onCompanyTypeChange(selectedCompanyType === type ? null : type)
               }
               className={cn(
-                "h-8 rounded-full text-xs transition-all",
+                "h-8 rounded-full text-xs transition-all duration-micro ease-calm",
                 selectedCompanyType === type &&
                   "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground"
               )}
@@ -111,7 +111,7 @@ export function FilterBar({
             onWorkModeChange(null);
             onCompanyTypeChange(null);
           }}
-          className="text-xs text-muted-foreground hover:text-foreground"
+          className="text-xs text-muted-foreground transition-colors duration-micro ease-calm hover:text-foreground"
         >
           Clear all filters
         </Button>

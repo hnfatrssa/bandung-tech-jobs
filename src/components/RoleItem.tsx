@@ -14,11 +14,13 @@ export function RoleItem({ role, companyId }: RoleItemProps) {
   return (
     <Link
       to={`/company/${companyId}/role/${role.id}`}
-      className="group flex items-center justify-between gap-4 rounded-lg bg-role-item p-4 transition-colors hover:bg-muted"
+      className="group flex items-center justify-between gap-4 rounded-lg bg-role-item p-4 transition-all duration-micro ease-calm hover:bg-muted hover:shadow-[0_1px_4px_-1px_hsl(var(--foreground)/0.06)]"
     >
       <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         <div className="flex-1">
-          <h4 className="font-medium group-hover:text-primary">{role.title}</h4>
+          <h4 className="font-medium transition-colors duration-micro ease-calm group-hover:text-primary">
+            {role.title}
+          </h4>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <RoleTag category={role.category} />
@@ -26,7 +28,7 @@ export function RoleItem({ role, companyId }: RoleItemProps) {
           {role.salary && <SalaryBadge salary={role.salary} />}
         </div>
       </div>
-      <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+      <ChevronRight className="h-4 w-4 text-muted-foreground transition-all duration-micro ease-calm group-hover:translate-x-0.5 group-hover:text-primary" />
     </Link>
   );
 }

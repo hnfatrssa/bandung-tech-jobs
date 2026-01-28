@@ -163,8 +163,11 @@ const Index = () => {
                 </p>
               </div>
 
-              {/* Company Cards */}
-              <div className="space-y-3">
+              {/* Company Cards - cross-fade on filter changes */}
+              <div 
+                key={`${searchQuery}-${selectedCategory}-${selectedWorkMode}-${selectedCompanyType}`}
+                className="animate-cross-fade space-y-3"
+              >
                 {filteredCompanies.length > 0 ? (
                   filteredCompanies.map((company, index) =>
                     company ? (

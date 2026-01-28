@@ -36,13 +36,14 @@ const RoleDetail = () => {
     <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="flex-1">
+      {/* Page content with calm enter animation */}
+      <main className="flex-1 animate-page-enter">
         {/* Breadcrumb */}
         <div className="border-b bg-muted/30">
           <div className="container py-4">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-micro ease-calm hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to all companies
@@ -79,7 +80,7 @@ const RoleDetail = () => {
                 </div>
               </div>
 
-              <Button asChild size="lg" className="shrink-0">
+              <Button asChild size="lg" className="shrink-0 transition-all duration-micro ease-calm">
                 <a
                   href={role.applyUrl}
                   target="_blank"
@@ -135,7 +136,7 @@ const RoleDetail = () => {
               <p className="mb-4 text-sm text-muted-foreground">
                 You'll be redirected to {company.name}'s careers page to apply.
               </p>
-              <Button asChild>
+              <Button asChild className="transition-all duration-micro ease-calm">
                 <a
                   href={role.applyUrl}
                   target="_blank"
@@ -161,7 +162,7 @@ const RoleDetail = () => {
                       <Link
                         key={otherRole.id}
                         to={`/company/${company.id}/role/${otherRole.id}`}
-                        className="flex items-center justify-between rounded-lg border bg-card p-4 transition-colors hover:bg-muted"
+                        className="flex items-center justify-between rounded-lg border bg-card p-4 transition-all duration-micro ease-calm hover:bg-muted hover:shadow-[0_1px_4px_-1px_hsl(var(--foreground)/0.06)]"
                       >
                         <div className="flex items-center gap-3">
                           <span className="font-medium">{otherRole.title}</span>
