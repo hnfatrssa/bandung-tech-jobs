@@ -77,6 +77,10 @@ const RoleDetail = () => {
                   {role.salary && <SalaryBadge salary={role.salary} variant="hero" />}
                 </div>
 
+                <h1 className="text-2xl font-bold tracking-tight text-primary-foreground md:text-3xl">
+                  {role.title}
+                </h1>
+
                 {role.skills.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
                     {role.skills.map((skill) => (
@@ -84,10 +88,6 @@ const RoleDetail = () => {
                     ))}
                   </div>
                 )}
-
-                <h1 className="text-2xl font-bold tracking-tight text-primary-foreground md:text-3xl">
-                  {role.title}
-                </h1>
 
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/20 text-primary-foreground">
