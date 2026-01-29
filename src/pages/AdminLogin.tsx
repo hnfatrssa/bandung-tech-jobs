@@ -26,7 +26,7 @@ export default function AdminLogin() {
     if (error) {
       toast({
         title: "Login failed",
-        description: error.message,
+        description: "Invalid email or password. Please try again.",
         variant: "destructive",
       });
       setIsLoading(false);
