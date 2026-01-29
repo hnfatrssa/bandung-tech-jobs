@@ -5,7 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Separator } from "@/components/ui/separator";
 import { categories, workModes, companyTypes, companies, allSkills, type Role } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import { ChevronDown, X, Briefcase, MapPin, DollarSign, Building2, Wrench } from "lucide-react";
+import { ChevronDown, X, Briefcase, MapPin, DollarSign, Building2, Wrench, Layers, Laptop, Factory } from "lucide-react";
 
 interface FilterBarProps {
   selectedCategories: string[];
@@ -235,7 +235,10 @@ export function FilterBar({
         {/* Role Categories */}
         <Collapsible defaultOpen>
           <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
-            <span>Category {selectedCategories.length > 0 && `(${selectedCategories.length})`}</span>
+            <span className="flex items-center gap-1.5">
+              <Layers className="h-3 w-3" />
+              Category {selectedCategories.length > 0 && `(${selectedCategories.length})`}
+            </span>
             <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent className="pt-2">
@@ -320,7 +323,10 @@ export function FilterBar({
         {/* Work Mode */}
         <Collapsible defaultOpen>
           <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
-            <span>Work Mode {selectedWorkModes.length > 0 && `(${selectedWorkModes.length})`}</span>
+            <span className="flex items-center gap-1.5">
+              <Laptop className="h-3 w-3" />
+              Work Mode {selectedWorkModes.length > 0 && `(${selectedWorkModes.length})`}
+            </span>
             <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent className="pt-2">
@@ -394,7 +400,10 @@ export function FilterBar({
         {/* Company Type */}
         <Collapsible defaultOpen>
           <CollapsibleTrigger className="flex w-full items-center justify-between py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
-            <span>Type {selectedCompanyTypes.length > 0 && `(${selectedCompanyTypes.length})`}</span>
+            <span className="flex items-center gap-1.5">
+              <Factory className="h-3 w-3" />
+              Type {selectedCompanyTypes.length > 0 && `(${selectedCompanyTypes.length})`}
+            </span>
             <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent className="pt-2">
