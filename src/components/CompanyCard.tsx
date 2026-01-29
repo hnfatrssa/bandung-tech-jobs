@@ -25,11 +25,8 @@ export function CompanyCard({ company, defaultExpanded = false }: CompanyCardPro
             </div>
             <div className="space-y-1">
               <h3 className="font-semibold leading-tight">{company.name}</h3>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-                <span>{company.type}</span>
-              </div>
               {company.description && (
-                <p className="text-sm text-muted-foreground line-clamp-2 pt-1">
+                <p className="text-sm text-muted-foreground line-clamp-2">
                   {company.description}
                 </p>
               )}
