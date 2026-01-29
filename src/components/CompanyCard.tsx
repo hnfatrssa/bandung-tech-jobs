@@ -26,11 +26,6 @@ export function CompanyCard({ company, defaultExpanded = false }: CompanyCardPro
             <div className="space-y-1">
               <h3 className="font-semibold leading-tight">{company.name}</h3>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {company.location}
-                </span>
-                <span className="hidden sm:inline">•</span>
                 <span>{company.type}</span>
               </div>
               {company.description && (
