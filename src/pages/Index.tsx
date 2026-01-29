@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Briefcase, Building2, Users, ArrowUpDown, SlidersHorizontal, X } from "lucide-react";
+import { Briefcase, Building2, MapPin, ArrowUpDown, SlidersHorizontal, X } from "lucide-react";
 import { companies, Company } from "@/lib/data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -210,7 +210,7 @@ const Index = () => {
               </div>
               <div className="flex items-center gap-2 animate-stat-pop [animation-delay:400ms]">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/20">
-                  <Users className="h-4 w-4 text-primary-foreground" />
+                  <MapPin className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
                   <p className="text-xl font-semibold text-primary-foreground">Bandung</p>
