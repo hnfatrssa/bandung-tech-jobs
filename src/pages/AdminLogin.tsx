@@ -33,11 +33,9 @@ export default function AdminLogin() {
       return;
     }
 
-    // Wait a moment for auth state to update
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/admin");
-    }, 500);
+    // Navigate immediately after successful login
+    setIsLoading(false);
+    navigate("/admin");
   };
 
   return (
