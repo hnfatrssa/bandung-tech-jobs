@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
-import { Briefcase, Building2, Users, ArrowUpDown, SlidersHorizontal, X } from "lucide-react";
-import { companies, Company } from "@/lib/data";
+import { useState, useMemo, useEffect } from "react";
+import { Briefcase, Building2, Users, ArrowUpDown, SlidersHorizontal } from "lucide-react";
+import { fetchCompanies, fetchAllSkills, Company } from "@/lib/api";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CompanyCard } from "@/components/CompanyCard";
@@ -15,10 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type SortOption = "recent" | "oldest" | "salary-high" | "salary-low" | "company-az";
 
-// Parse salary string like "IDR 18-25 jt/bulan" to get min value in millions
+// Parse salary string like "IDR 18-25M/month" to get min value in millions
 function parseSalaryMin(salary: string | undefined): number | null {
   if (!salary) return null;
   const match = salary.match(/(\d+)-(\d+)/);
@@ -27,6 +28,10 @@ function parseSalaryMin(salary: string | undefined): number | null {
 }
 
 const Index = () => {
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [allSkills, setAllSkills] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedWorkModes, setSelectedWorkModes] = useState<string[]>([]);
@@ -34,6 +39,20 @@ const Index = () => {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [salaryRange, setSalaryRange] = useState<[number, number]>([5, 40]);
   const [sortBy, setSortBy] = useState<SortOption>("recent");
+
+  useEffect(() => {
+    async function loadData() {
+      setIsLoading(true);
+      const [companiesData, skillsData] = await Promise.all([
+        fetchCompanies(),
+        fetchAllSkills(),
+      ]);
+      setCompanies(companiesData);
+      setAllSkills(skillsData);
+      setIsLoading(false);
+    }
+    loadData();
+  }, []);
 
   const filteredCompanies = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
@@ -137,11 +156,11 @@ const Index = () => {
       }
       return 0;
     });
-  }, [searchQuery, selectedCategories, selectedWorkModes, selectedCompanyTypes, selectedSkills, salaryRange, sortBy]);
+  }, [companies, searchQuery, selectedCategories, selectedWorkModes, selectedCompanyTypes, selectedSkills, salaryRange, sortBy]);
 
   const totalRoles = useMemo(() => {
     return companies.reduce((sum, company) => sum + company.roles.length, 0);
-  }, []);
+  }, [companies]);
 
   const filteredRolesCount = useMemo(() => {
     return filteredCompanies.reduce((sum, company) => sum + (company?.roles.length || 0), 0);
@@ -195,7 +214,7 @@ const Index = () => {
                   <Building2 className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold text-primary-foreground">{companies.length}</p>
+                  <p className="text-xl font-semibold text-primary-foreground">{isLoading ? "-" : companies.length}</p>
                   <p className="text-xs text-primary-foreground/70">Companies hiring</p>
                 </div>
               </div>
@@ -204,7 +223,7 @@ const Index = () => {
                   <Briefcase className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold text-primary-foreground">{totalRoles}</p>
+                  <p className="text-xl font-semibold text-primary-foreground">{isLoading ? "-" : totalRoles}</p>
                   <p className="text-xs text-primary-foreground/70">Open roles</p>
                 </div>
               </div>
@@ -254,6 +273,8 @@ const Index = () => {
                       onCompanyTypesChange={setSelectedCompanyTypes}
                       onSkillsChange={setSelectedSkills}
                       onSalaryRangeChange={setSalaryRange}
+                      allSkills={allSkills}
+                      companies={companies}
                     />
                   </div>
                 </SheetContent>
@@ -275,6 +296,8 @@ const Index = () => {
                   onCompanyTypesChange={setSelectedCompanyTypes}
                   onSkillsChange={setSelectedSkills}
                   onSalaryRangeChange={setSalaryRange}
+                  allSkills={allSkills}
+                  companies={companies}
                 />
               </div>
             </aside>
@@ -284,7 +307,9 @@ const Index = () => {
               {/* Results count and sort */}
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">
-                  {!hasActiveFilters ? (
+                  {isLoading ? (
+                    <Skeleton className="h-4 w-40" />
+                  ) : !hasActiveFilters ? (
                     <>Showing all {companies.length} companies</>
                   ) : (
                     <>
@@ -312,34 +337,48 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Company Cards - cross-fade on filter/sort changes */}
-              <div 
-                key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${selectedSkills.join(',')}-${salaryRange.join('-')}-${sortBy}`}
-                className="animate-cross-fade space-y-3"
-              >
-                {filteredCompanies.length > 0 ? (
-                  filteredCompanies.map((company, index) =>
-                    company ? (
-                      <div
-                        key={company.id}
-                        className="animate-card-enter"
-                        style={{ animationDelay: `${Math.min(index * 50, 200)}ms` }}
-                      >
-                        <CompanyCard
-                          company={company}
-                          defaultExpanded={true}
-                        />
-                      </div>
-                    ) : null
-                  )
-                ) : (
-                  <div className="rounded-xl border bg-card p-12 text-center">
-                    <p className="text-muted-foreground">
-                      No companies match your filters. Try adjusting your criteria.
-                    </p>
-                  </div>
-                )}
-              </div>
+              {/* Company Cards */}
+              {isLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="rounded-xl border bg-card p-6">
+                      <Skeleton className="mb-4 h-6 w-48" />
+                      <Skeleton className="mb-2 h-4 w-32" />
+                      <Skeleton className="h-16 w-full" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div 
+                  key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${selectedSkills.join(',')}-${salaryRange.join('-')}-${sortBy}`}
+                  className="animate-cross-fade space-y-3"
+                >
+                  {filteredCompanies.length > 0 ? (
+                    filteredCompanies.map((company, index) =>
+                      company ? (
+                        <div
+                          key={company.id}
+                          className="animate-card-enter"
+                          style={{ animationDelay: `${Math.min(index * 50, 200)}ms` }}
+                        >
+                          <CompanyCard
+                            company={company}
+                            defaultExpanded={true}
+                          />
+                        </div>
+                      ) : null
+                    )
+                  ) : (
+                    <div className="rounded-xl border bg-card p-12 text-center">
+                      <p className="text-muted-foreground">
+                        {companies.length === 0 
+                          ? "No companies or roles added yet. Check back soon!"
+                          : "No companies match your filters. Try adjusting your criteria."}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </section>
