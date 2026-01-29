@@ -31,6 +31,7 @@ const Index = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [allSkills, setAllSkills] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -43,13 +44,36 @@ const Index = () => {
   useEffect(() => {
     async function loadData() {
       setIsLoading(true);
-      const [companiesData, skillsData] = await Promise.all([
-        fetchCompanies(),
-        fetchAllSkills(),
-      ]);
-      setCompanies(companiesData);
-      setAllSkills(skillsData);
-      setIsLoading(false);
+      setLoadError(null);
+
+      // Fail-fast: avoid the UI being stuck in an infinite loading state if the
+      // backend fetch errors/hangs (network/CORS/env issues).
+      const withTimeout = async <T,>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+        let timeoutId: number | undefined;
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          timeoutId = window.setTimeout(() => reject(new Error(`Timeout while loading ${label}`)), ms);
+        });
+
+        try {
+          return await Promise.race([promise, timeoutPromise]);
+        } finally {
+          if (timeoutId) window.clearTimeout(timeoutId);
+        }
+      };
+
+      try {
+        const [companiesData, skillsData] = await Promise.all([
+          withTimeout(fetchCompanies(), 12000, "companies"),
+          withTimeout(fetchAllSkills(), 12000, "skills"),
+        ]);
+        setCompanies(companiesData);
+        setAllSkills(skillsData);
+      } catch (err) {
+        console.error("Homepage: failed to load companies/roles", err);
+        setLoadError("Unable to load job listings right now. Please refresh and try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
     loadData();
   }, []);
@@ -353,7 +377,11 @@ const Index = () => {
                   key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${selectedSkills.join(',')}-${salaryRange.join('-')}-${sortBy}`}
                   className="animate-cross-fade space-y-3"
                 >
-                  {filteredCompanies.length > 0 ? (
+                  {loadError ? (
+                    <div className="rounded-xl border bg-card p-6">
+                      <p className="text-sm text-muted-foreground">{loadError}</p>
+                    </div>
+                  ) : filteredCompanies.length > 0 ? (
                     filteredCompanies.map((company, index) =>
                       company ? (
                         <div
