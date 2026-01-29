@@ -61,6 +61,36 @@ function generateSlug(title: string): string {
     .trim();
 }
 
+// Validate URL to only allow http/https schemes
+function isValidApplyUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return ["http:", "https:"].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
+// Map database errors to user-friendly messages
+function getErrorMessage(error: { message: string; code?: string }): string {
+  const message = error.message.toLowerCase();
+  
+  if (message.includes("duplicate") && message.includes("slug")) {
+    return "This role slug is already in use. Please choose a different one.";
+  }
+  if (message.includes("duplicate")) {
+    return "A role with these details already exists.";
+  }
+  if (message.includes("violates row-level security")) {
+    return "You don't have permission to perform this action.";
+  }
+  if (message.includes("foreign key")) {
+    return "The selected company no longer exists.";
+  }
+  
+  return "Unable to save the role. Please try again.";
+}
+
 export function RoleForm({ role, companies, onClose, onSuccess }: RoleFormProps) {
   const [companyId, setCompanyId] = useState(role?.company_id || companies[0]?.id || "");
   const [title, setTitle] = useState(role?.title || "");
@@ -98,6 +128,18 @@ export function RoleForm({ role, companies, onClose, onSuccess }: RoleFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate apply URL before submission
+    const trimmedUrl = applyUrl.trim();
+    if (!isValidApplyUrl(trimmedUrl)) {
+      toast({
+        title: "Invalid URL",
+        description: "Please enter a valid URL starting with http:// or https://",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
 
     const data = {
@@ -111,7 +153,7 @@ export function RoleForm({ role, companies, onClose, onSuccess }: RoleFormProps)
       summary: summary.trim(),
       responsibilities: responsibilities.split("\n").map((r) => r.trim()).filter(Boolean),
       requirements: requirements.split("\n").map((r) => r.trim()).filter(Boolean),
-      apply_url: applyUrl.trim(),
+      apply_url: trimmedUrl,
       last_updated: new Date().toISOString().split("T")[0],
     };
 
@@ -130,7 +172,7 @@ export function RoleForm({ role, companies, onClose, onSuccess }: RoleFormProps)
     if (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: getErrorMessage(error),
         variant: "destructive",
       });
       setIsLoading(false);

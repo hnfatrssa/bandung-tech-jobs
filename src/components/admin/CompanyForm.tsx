@@ -46,6 +46,23 @@ function generateSlug(name: string): string {
     .trim();
 }
 
+// Map database errors to user-friendly messages
+function getErrorMessage(error: { message: string; code?: string }): string {
+  const message = error.message.toLowerCase();
+  
+  if (message.includes("duplicate") && message.includes("slug")) {
+    return "This company slug is already in use. Please choose a different one.";
+  }
+  if (message.includes("duplicate")) {
+    return "A company with these details already exists.";
+  }
+  if (message.includes("violates row-level security")) {
+    return "You don't have permission to perform this action.";
+  }
+  
+  return "Unable to save the company. Please try again.";
+}
+
 export function CompanyForm({ company, onClose, onSuccess }: CompanyFormProps) {
   const [name, setName] = useState(company?.name || "");
   const [slug, setSlug] = useState(company?.slug || "");
@@ -89,7 +106,7 @@ export function CompanyForm({ company, onClose, onSuccess }: CompanyFormProps) {
     if (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: getErrorMessage(error),
         variant: "destructive",
       });
       setIsLoading(false);

@@ -111,7 +111,14 @@ export default function Admin() {
     const { error } = await supabase.from("companies").delete().eq("id", id);
     
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      const isPermissionError = error.message.toLowerCase().includes("row-level security");
+      toast({ 
+        title: "Error", 
+        description: isPermissionError 
+          ? "You don't have permission to delete this company." 
+          : "Unable to delete the company. Please try again.", 
+        variant: "destructive" 
+      });
     } else {
       toast({ title: "Success", description: "Company deleted" });
       fetchData();
@@ -123,7 +130,14 @@ export default function Admin() {
     const { error } = await supabase.from("roles").delete().eq("id", id);
     
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      const isPermissionError = error.message.toLowerCase().includes("row-level security");
+      toast({ 
+        title: "Error", 
+        description: isPermissionError 
+          ? "You don't have permission to delete this role." 
+          : "Unable to delete the role. Please try again.", 
+        variant: "destructive" 
+      });
     } else {
       toast({ title: "Success", description: "Role deleted" });
       fetchData();
