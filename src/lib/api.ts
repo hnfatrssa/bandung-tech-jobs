@@ -1,5 +1,14 @@
 import { supabase } from "@/integrations/supabase/client";
 
+function createAbortSignal(timeoutMs: number) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  return {
+    signal: controller.signal,
+    clear: () => window.clearTimeout(timeoutId),
+  };
+}
+
 export interface Role {
   id: string;
   title: string;
@@ -76,112 +85,133 @@ function transformCompany(dbCompany: DbCompany, roles: DbRole[]): Company {
 }
 
 export async function fetchCompanies(): Promise<Company[]> {
-  const { data: companiesData, error: companiesError } = await supabase
-    .from("companies")
-    .select("*")
-    .order("name");
+  const { signal, clear } = createAbortSignal(10000);
+  try {
+    const [companiesRes, rolesRes] = await Promise.all([
+      supabase.from("companies").select("*").order("name").abortSignal(signal),
+      supabase.from("roles").select("*").order("last_updated", { ascending: false }).abortSignal(signal),
+    ]);
 
-  if (companiesError) {
-    console.error("Error fetching companies:", companiesError);
-    return [];
+    const { data: companiesData, error: companiesError } = companiesRes;
+    const { data: rolesData, error: rolesError } = rolesRes;
+
+    if (companiesError) throw companiesError;
+    if (rolesError) throw rolesError;
+
+    // Group roles by company
+    const rolesByCompany = (rolesData as DbRole[]).reduce((acc, role) => {
+      if (!acc[role.company_id]) {
+        acc[role.company_id] = [];
+      }
+      acc[role.company_id].push(role);
+      return acc;
+    }, {} as Record<string, DbRole[]>);
+
+    // Transform and filter companies that have roles
+    return (companiesData as DbCompany[])
+      .map((company) => transformCompany(company, rolesByCompany[company.id] || []))
+      .filter((company) => company.roles.length > 0);
+  } catch (err) {
+    console.error("Error fetching companies/roles:", err);
+    throw err;
+  } finally {
+    clear();
   }
-
-  const { data: rolesData, error: rolesError } = await supabase
-    .from("roles")
-    .select("*")
-    .order("last_updated", { ascending: false });
-
-  if (rolesError) {
-    console.error("Error fetching roles:", rolesError);
-    return [];
-  }
-
-  // Group roles by company
-  const rolesByCompany = (rolesData as DbRole[]).reduce((acc, role) => {
-    if (!acc[role.company_id]) {
-      acc[role.company_id] = [];
-    }
-    acc[role.company_id].push(role);
-    return acc;
-  }, {} as Record<string, DbRole[]>);
-
-  // Transform and filter companies that have roles
-  return (companiesData as DbCompany[])
-    .map((company) => transformCompany(company, rolesByCompany[company.id] || []))
-    .filter((company) => company.roles.length > 0);
 }
 
 export async function fetchCompanyBySlug(slug: string): Promise<Company | null> {
-  const { data: companyData, error: companyError } = await supabase
-    .from("companies")
-    .select("*")
-    .eq("slug", slug)
-    .maybeSingle();
+  const { signal, clear } = createAbortSignal(10000);
+  try {
+    const { data: companyData, error: companyError } = await supabase
+      .from("companies")
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle()
+      .abortSignal(signal);
 
-  if (companyError || !companyData) {
-    console.error("Error fetching company:", companyError);
-    return null;
+    if (companyError || !companyData) {
+      console.error("Error fetching company:", companyError);
+      return null;
+    }
+
+    const { data: rolesData, error: rolesError } = await supabase
+      .from("roles")
+      .select("*")
+      .eq("company_id", companyData.id)
+      .order("last_updated", { ascending: false })
+      .abortSignal(signal);
+
+    if (rolesError) {
+      console.error("Error fetching roles:", rolesError);
+      return null;
+    }
+
+    return transformCompany(companyData as DbCompany, rolesData as DbRole[]);
+  } finally {
+    clear();
   }
-
-  const { data: rolesData, error: rolesError } = await supabase
-    .from("roles")
-    .select("*")
-    .eq("company_id", companyData.id)
-    .order("last_updated", { ascending: false });
-
-  if (rolesError) {
-    console.error("Error fetching roles:", rolesError);
-    return null;
-  }
-
-  return transformCompany(companyData as DbCompany, rolesData as DbRole[]);
 }
 
 export async function fetchRoleBySlug(companySlug: string, roleSlug: string): Promise<{ company: Company; role: Role } | null> {
-  const { data: companyData, error: companyError } = await supabase
-    .from("companies")
-    .select("*")
-    .eq("slug", companySlug)
-    .maybeSingle();
+  const { signal, clear } = createAbortSignal(10000);
+  try {
+    const { data: companyData, error: companyError } = await supabase
+      .from("companies")
+      .select("*")
+      .eq("slug", companySlug)
+      .maybeSingle()
+      .abortSignal(signal);
 
-  if (companyError || !companyData) {
-    console.error("Error fetching company:", companyError);
-    return null;
+    if (companyError || !companyData) {
+      console.error("Error fetching company:", companyError);
+      return null;
+    }
+
+    const { data: roleData, error: roleError } = await supabase
+      .from("roles")
+      .select("*")
+      .eq("company_id", companyData.id)
+      .eq("slug", roleSlug)
+      .maybeSingle()
+      .abortSignal(signal);
+
+    if (roleError || !roleData) {
+      console.error("Error fetching role:", roleError);
+      return null;
+    }
+
+    return {
+      company: transformCompany(companyData as DbCompany, [roleData as DbRole]),
+      role: transformRole(roleData as DbRole),
+    };
+  } finally {
+    clear();
   }
-
-  const { data: roleData, error: roleError } = await supabase
-    .from("roles")
-    .select("*")
-    .eq("company_id", companyData.id)
-    .eq("slug", roleSlug)
-    .maybeSingle();
-
-  if (roleError || !roleData) {
-    console.error("Error fetching role:", roleError);
-    return null;
-  }
-
-  return {
-    company: transformCompany(companyData as DbCompany, [roleData as DbRole]),
-    role: transformRole(roleData as DbRole),
-  };
 }
 
 // Extract all unique skills from roles
 export async function fetchAllSkills(): Promise<string[]> {
-  const { data, error } = await supabase.from("roles").select("skills");
+  const { signal, clear } = createAbortSignal(10000);
+  try {
+    const { data, error } = await supabase.from("roles").select("skills").abortSignal(signal);
 
-  if (error) {
-    console.error("Error fetching skills:", error);
-    return [];
+    if (error) {
+      console.error("Error fetching skills:", error);
+      throw error;
+    }
+
+    const allSkills = new Set<string>();
+    (data as { skills: string[] }[]).forEach((role) => {
+      role.skills.forEach((skill) => allSkills.add(skill));
+    });
+
+    return Array.from(allSkills).sort();
+  } catch (err) {
+    console.error("Error fetching skills:", err);
+    throw err;
+  } finally {
+    clear();
   }
-
-  const allSkills = new Set<string>();
-  (data as { skills: string[] }[]).forEach((role) => {
-    role.skills.forEach((skill) => allSkills.add(skill));
-  });
-
-  return Array.from(allSkills).sort();
 }
 
 export const categories = ["Engineering", "Design", "Product", "Data", "QA", "Platform"] as const;
