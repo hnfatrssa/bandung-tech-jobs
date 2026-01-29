@@ -95,8 +95,8 @@ const RoleDetail = () => {
                   </div>
                   <div>
                     <p className="font-medium text-primary-foreground">{company.name}</p>
-                    <p className="flex items-center gap-1 text-sm text-primary-foreground/80">
-                      <MapPin className="h-3.5 w-3.5" />
+                    <p className="flex items-center gap-1.5 text-sm text-primary-foreground/80">
+                      <MapPin className="h-4 w-4" />
                       {company.location}
                     </p>
                   </div>
