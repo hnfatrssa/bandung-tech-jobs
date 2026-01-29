@@ -1,14 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 
-function createAbortSignal(timeoutMs: number) {
-  const controller = new AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-  return {
-    signal: controller.signal,
-    clear: () => window.clearTimeout(timeoutId),
-  };
-}
-
 export interface Role {
   id: string;
   title: string;
@@ -85,11 +76,10 @@ function transformCompany(dbCompany: DbCompany, roles: DbRole[]): Company {
 }
 
 export async function fetchCompanies(): Promise<Company[]> {
-  const { signal, clear } = createAbortSignal(10000);
   try {
     const [companiesRes, rolesRes] = await Promise.all([
-      supabase.from("companies").select("*").order("name").abortSignal(signal),
-      supabase.from("roles").select("*").order("last_updated", { ascending: false }).abortSignal(signal),
+      supabase.from("companies").select("*").order("name"),
+      supabase.from("roles").select("*").order("last_updated", { ascending: false }),
     ]);
 
     const { data: companiesData, error: companiesError } = companiesRes;
@@ -114,20 +104,16 @@ export async function fetchCompanies(): Promise<Company[]> {
   } catch (err) {
     console.error("Error fetching companies/roles:", err);
     throw err;
-  } finally {
-    clear();
   }
 }
 
 export async function fetchCompanyBySlug(slug: string): Promise<Company | null> {
-  const { signal, clear } = createAbortSignal(10000);
   try {
     const { data: companyData, error: companyError } = await supabase
       .from("companies")
       .select("*")
       .eq("slug", slug)
-      .maybeSingle()
-      .abortSignal(signal);
+      .maybeSingle();
 
     if (companyError || !companyData) {
       console.error("Error fetching company:", companyError);
@@ -138,8 +124,7 @@ export async function fetchCompanyBySlug(slug: string): Promise<Company | null> 
       .from("roles")
       .select("*")
       .eq("company_id", companyData.id)
-      .order("last_updated", { ascending: false })
-      .abortSignal(signal);
+      .order("last_updated", { ascending: false });
 
     if (rolesError) {
       console.error("Error fetching roles:", rolesError);
@@ -147,20 +132,19 @@ export async function fetchCompanyBySlug(slug: string): Promise<Company | null> 
     }
 
     return transformCompany(companyData as DbCompany, rolesData as DbRole[]);
-  } finally {
-    clear();
+  } catch (err) {
+    console.error("Error fetching company by slug:", err);
+    return null;
   }
 }
 
 export async function fetchRoleBySlug(companySlug: string, roleSlug: string): Promise<{ company: Company; role: Role } | null> {
-  const { signal, clear } = createAbortSignal(10000);
   try {
     const { data: companyData, error: companyError } = await supabase
       .from("companies")
       .select("*")
       .eq("slug", companySlug)
-      .maybeSingle()
-      .abortSignal(signal);
+      .maybeSingle();
 
     if (companyError || !companyData) {
       console.error("Error fetching company:", companyError);
@@ -172,8 +156,7 @@ export async function fetchRoleBySlug(companySlug: string, roleSlug: string): Pr
       .select("*")
       .eq("company_id", companyData.id)
       .eq("slug", roleSlug)
-      .maybeSingle()
-      .abortSignal(signal);
+      .maybeSingle();
 
     if (roleError || !roleData) {
       console.error("Error fetching role:", roleError);
@@ -184,16 +167,16 @@ export async function fetchRoleBySlug(companySlug: string, roleSlug: string): Pr
       company: transformCompany(companyData as DbCompany, [roleData as DbRole]),
       role: transformRole(roleData as DbRole),
     };
-  } finally {
-    clear();
+  } catch (err) {
+    console.error("Error fetching role by slug:", err);
+    return null;
   }
 }
 
 // Extract all unique skills from roles
 export async function fetchAllSkills(): Promise<string[]> {
-  const { signal, clear } = createAbortSignal(10000);
   try {
-    const { data, error } = await supabase.from("roles").select("skills").abortSignal(signal);
+    const { data, error } = await supabase.from("roles").select("skills");
 
     if (error) {
       console.error("Error fetching skills:", error);
@@ -209,8 +192,6 @@ export async function fetchAllSkills(): Promise<string[]> {
   } catch (err) {
     console.error("Error fetching skills:", err);
     throw err;
-  } finally {
-    clear();
   }
 }
 

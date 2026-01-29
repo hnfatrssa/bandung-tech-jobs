@@ -1,6 +1,7 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Briefcase, Building2, Users, ArrowUpDown, SlidersHorizontal } from "lucide-react";
-import { fetchCompanies, fetchAllSkills, Company } from "@/lib/api";
+import type { Company } from "@/lib/api";
+import { companies as fallbackCompanies, allSkills as fallbackAllSkills } from "@/lib/data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CompanyCard } from "@/components/CompanyCard";
@@ -15,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type SortOption = "recent" | "oldest" | "salary-high" | "salary-low" | "company-az";
 
@@ -28,10 +28,10 @@ function parseSalaryMin(salary: string | undefined): number | null {
 }
 
 const Index = () => {
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [allSkills, setAllSkills] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  // Always show sample listings on the homepage (no backend dependency).
+  // This guarantees the front page is never empty while backend reliability is being improved.
+  const [companies] = useState<Company[]>(() => fallbackCompanies as unknown as Company[]);
+  const [allSkills] = useState<string[]>(() => fallbackAllSkills);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -40,43 +40,6 @@ const Index = () => {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [salaryRange, setSalaryRange] = useState<[number, number]>([5, 40]);
   const [sortBy, setSortBy] = useState<SortOption>("recent");
-
-  useEffect(() => {
-    async function loadData() {
-      setIsLoading(true);
-      setLoadError(null);
-
-      // Fail-fast: avoid the UI being stuck in an infinite loading state if the
-      // backend fetch errors/hangs (network/CORS/env issues).
-      const withTimeout = async <T,>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
-        let timeoutId: number | undefined;
-        const timeoutPromise = new Promise<never>((_, reject) => {
-          timeoutId = window.setTimeout(() => reject(new Error(`Timeout while loading ${label}`)), ms);
-        });
-
-        try {
-          return await Promise.race([promise, timeoutPromise]);
-        } finally {
-          if (timeoutId) window.clearTimeout(timeoutId);
-        }
-      };
-
-      try {
-        const [companiesData, skillsData] = await Promise.all([
-          withTimeout(fetchCompanies(), 12000, "companies"),
-          withTimeout(fetchAllSkills(), 12000, "skills"),
-        ]);
-        setCompanies(companiesData);
-        setAllSkills(skillsData);
-      } catch (err) {
-        console.error("Homepage: failed to load companies/roles", err);
-        setLoadError("Unable to load job listings right now. Please refresh and try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
-  }, []);
 
   const filteredCompanies = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
@@ -238,7 +201,7 @@ const Index = () => {
                   <Building2 className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold text-primary-foreground">{isLoading ? "-" : companies.length}</p>
+                  <p className="text-xl font-semibold text-primary-foreground">{companies.length}</p>
                   <p className="text-xs text-primary-foreground/70">Companies hiring</p>
                 </div>
               </div>
@@ -247,7 +210,7 @@ const Index = () => {
                   <Briefcase className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-xl font-semibold text-primary-foreground">{isLoading ? "-" : totalRoles}</p>
+                  <p className="text-xl font-semibold text-primary-foreground">{totalRoles}</p>
                   <p className="text-xs text-primary-foreground/70">Open roles</p>
                 </div>
               </div>
@@ -331,9 +294,7 @@ const Index = () => {
               {/* Results count and sort */}
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">
-                  {isLoading ? (
-                    <Skeleton className="h-4 w-40" />
-                  ) : !hasActiveFilters ? (
+                  {!hasActiveFilters ? (
                     <>Showing all {companies.length} companies</>
                   ) : (
                     <>
@@ -362,51 +323,28 @@ const Index = () => {
               </div>
 
               {/* Company Cards */}
-              {isLoading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="rounded-xl border bg-card p-6">
-                      <Skeleton className="mb-4 h-6 w-48" />
-                      <Skeleton className="mb-2 h-4 w-32" />
-                      <Skeleton className="h-16 w-full" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div 
-                  key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${selectedSkills.join(',')}-${salaryRange.join('-')}-${sortBy}`}
-                  className="animate-cross-fade space-y-3"
-                >
-                  {loadError ? (
-                    <div className="rounded-xl border bg-card p-6">
-                      <p className="text-sm text-muted-foreground">{loadError}</p>
-                    </div>
-                  ) : filteredCompanies.length > 0 ? (
-                    filteredCompanies.map((company, index) =>
-                      company ? (
-                        <div
-                          key={company.id}
-                          className="animate-card-enter"
-                          style={{ animationDelay: `${Math.min(index * 50, 200)}ms` }}
-                        >
-                          <CompanyCard
-                            company={company}
-                            defaultExpanded={true}
-                          />
-                        </div>
-                      ) : null
-                    )
-                  ) : (
-                    <div className="rounded-xl border bg-card p-12 text-center">
-                      <p className="text-muted-foreground">
-                        {companies.length === 0 
-                          ? "No companies or roles added yet. Check back soon!"
-                          : "No companies match your filters. Try adjusting your criteria."}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
+              <div 
+                key={`${searchQuery}-${selectedCategories.join(',')}-${selectedWorkModes.join(',')}-${selectedCompanyTypes.join(',')}-${selectedSkills.join(',')}-${salaryRange.join('-')}-${sortBy}`}
+                className="animate-cross-fade space-y-3"
+              >
+                {filteredCompanies.length > 0 ? (
+                  filteredCompanies.map((company, index) =>
+                    company ? (
+                      <div
+                        key={company.id}
+                        className="animate-card-enter"
+                        style={{ animationDelay: `${Math.min(index * 50, 200)}ms` }}
+                      >
+                        <CompanyCard company={company} defaultExpanded={true} />
+                      </div>
+                    ) : null
+                  )
+                ) : (
+                  <div className="rounded-xl border bg-card p-12 text-center">
+                    <p className="text-muted-foreground">No companies match your filters. Try adjusting your criteria.</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </section>
