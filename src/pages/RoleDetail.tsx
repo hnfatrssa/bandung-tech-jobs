@@ -1,7 +1,6 @@
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { ArrowLeft, MapPin, Building2, ExternalLink, Clock, Loader2 } from "lucide-react";
-import { fetchRoleBySlug, Company, Role } from "@/lib/api";
+import { ArrowLeft, MapPin, Building2, ExternalLink, Clock } from "lucide-react";
+import { companies } from "@/lib/data";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -13,40 +12,9 @@ import { formatDistanceToNow, format } from "date-fns";
 
 const RoleDetail = () => {
   const { companyId, roleId } = useParams();
-  const [company, setCompany] = useState<Company | null>(null);
-  const [role, setRole] = useState<Role | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function loadData() {
-      if (!companyId || !roleId) {
-        setIsLoading(false);
-        return;
-      }
-      
-      setIsLoading(true);
-      const result = await fetchRoleBySlug(companyId, roleId);
-      
-      if (result) {
-        setCompany(result.company);
-        setRole(result.role);
-      }
-      setIsLoading(false);
-    }
-    loadData();
-  }, [companyId, roleId]);
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <main className="container flex flex-1 flex-col items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const company = companies.find((c) => c.id === companyId);
+  const role = company?.roles.find((r) => r.id === roleId);
 
   if (!company || !role) {
     return (
@@ -167,34 +135,30 @@ const RoleDetail = () => {
             </div>
 
             {/* Responsibilities */}
-            {role.responsibilities.length > 0 && (
-              <div className="space-y-3">
-                <h2 className="text-lg font-semibold">Responsibilities</h2>
-                <ul className="space-y-2">
-                  {role.responsibilities.map((item, index) => (
-                    <li key={index} className="flex items-start gap-3 text-muted-foreground">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <div className="space-y-3">
+              <h2 className="text-lg font-semibold">Responsibilities</h2>
+              <ul className="space-y-2">
+                {role.responsibilities.map((item, index) => (
+                  <li key={index} className="flex items-start gap-3 text-muted-foreground">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             {/* Requirements */}
-            {role.requirements.length > 0 && (
-              <div className="space-y-3">
-                <h2 className="text-lg font-semibold">Requirements</h2>
-                <ul className="space-y-2">
-                  {role.requirements.map((item, index) => (
-                    <li key={index} className="flex items-start gap-3 text-muted-foreground">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-secondary" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <div className="space-y-3">
+              <h2 className="text-lg font-semibold">Requirements</h2>
+              <ul className="space-y-2">
+                {role.requirements.map((item, index) => (
+                  <li key={index} className="flex items-start gap-3 text-muted-foreground">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-secondary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             {/* CTA */}
             <div className="rounded-xl border bg-muted/30 p-6 text-center">

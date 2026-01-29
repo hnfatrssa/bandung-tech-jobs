@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
-import { categories, workModes, companyTypes, type Role, type Company } from "@/lib/api";
+import { categories, workModes, companyTypes, companies, allSkills, type Role } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { ChevronDown, X, Briefcase, MapPin, DollarSign, Building2, Wrench } from "lucide-react";
 
@@ -18,8 +18,6 @@ interface FilterBarProps {
   onCompanyTypesChange: (types: string[]) => void;
   onSkillsChange: (skills: string[]) => void;
   onSalaryRangeChange: (range: [number, number]) => void;
-  allSkills?: string[];
-  companies?: Company[];
 }
 
 // Parse salary string to get min value in millions
@@ -28,6 +26,11 @@ function parseSalaryMin(salary: string | undefined): number | null {
   const match = salary.match(/(\d+)-(\d+)/);
   if (match) return parseInt(match[1], 10);
   return null;
+}
+
+// Get all roles for counting
+function getAllRoles(): Role[] {
+  return companies.flatMap(company => company.roles);
 }
 
 export function FilterBar({
@@ -41,10 +44,8 @@ export function FilterBar({
   onCompanyTypesChange,
   onSkillsChange,
   onSalaryRangeChange,
-  allSkills = [],
-  companies = [],
 }: FilterBarProps) {
-  const allRoles = useMemo(() => companies.flatMap(company => company.roles), [companies]);
+  const allRoles = useMemo(() => getAllRoles(), []);
 
   // Count roles per filter option
   const categoryCounts = useMemo(() => {
